@@ -13,7 +13,7 @@ use SimpleXMLElement;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @testdox GeoSets
+ * @testdox Currencies
  */
 final class IsoCurrenciesTest extends TestCase
 {
@@ -507,11 +507,11 @@ final class IsoCurrenciesTest extends TestCase
 
     /**
      * @test
-     * @testdox Test the `->count()` feature on the list of GeoSets.
+     * @testdox Test the `->count()` feature on the list of Currencies.
      * @return void
      * @throws QueryException
      */
-    public function testCountOfGeoSets(): void
+    public function testCountOfCurrencies(): void
     {
         $currencies = self::$geoCodes->currencies();
         $count = $currencies->count();
