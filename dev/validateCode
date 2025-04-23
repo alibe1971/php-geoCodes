@@ -1,84 +1,101 @@
-#!/bin/bash
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
 
-# Php command as version or use the default php
-PHP_BIN="${1:-php}"
+// ANSI color codes
+define('COLOR_RED', "\033[31m");
+define('COLOR_RESET', "\033[0m");
 
-if ! command -v "$PHP_BIN" >/dev/null; then
-  echo "Error $PHP_BIN not found"
-  exit 1
-fi
+// Always use the same CLI that invoked this script
+$phpBin    = PHP_BINARY;
+$phpVersion= PHP_VERSION;
 
-show_progress() {
-  chars=('▓')
-  index=0
+fwrite(STDOUT, "Using PHP CLI: {$phpBin} (version {$phpVersion})\n\n");
 
-  while true; do
-    printf "%s" "${chars[index]}"
-    ((index++))
-    index=$((index % ${#chars[@]}))
-    sleep 0.1
-  done
+/**
+ * Executes an external command and handles its output.
+ *
+ * @param string       $label       Descriptive label for the task
+ * @param list<string> $cmd         Array of command and its arguments to execute
+ * @param bool         $exitOnErr   If true, exits with code > 0 on error
+ * @return string                    Combined stdout and stderr output
+ */
+function run(string $label, array $cmd, bool $exitOnErr = true): string {
+    fwrite(STDOUT, "{$label}…\n");
+
+    $proc = proc_open(
+        $cmd,
+        [
+            ['pipe', 'r'],
+            ['pipe', 'w'],
+            ['pipe', 'w'],
+        ],
+        $pipes
+    );
+
+    if ($proc === false) {
+        fwrite(STDERR, COLOR_RED . "Error: unable to open process for '{$label}'." . COLOR_RESET . "\n");
+        exit(1);
+    }
+
+    // Ensure to PHPStan that $proc is a resource
+    assert(is_resource($proc));
+
+    $out  = stream_get_contents($pipes[1]);
+    $err  = stream_get_contents($pipes[2]);
+    $code = proc_close($proc);
+
+    if ($exitOnErr && $code !== 0) {
+        fwrite(STDERR, COLOR_RED . $out . $err . "\nError during stage: {$label}" . COLOR_RESET . "\n");
+        exit(1);
+    }
+
+    fwrite(STDOUT, "{$label} completed.\n\n");
+    return trim($out . $err);
 }
 
-script_path=$(readlink -f "$0")
-base_directory=$(dirname "$(dirname "$script_path")")
+// Change to project base directory (one level above 'dev')
+$baseDirectory = dirname(__DIR__);
+chdir($baseDirectory);
 
-cd "$base_directory"
+// 1) php-cbf (fix PSR-12)
+run(
+    '1) php-cbf (fix PSR-12)',
+    [$phpBin, 'vendor/bin/phpcbf', '--standard=phpcs.xml']
+);
 
-echo
-echo 'SOURCE CODE CHECK WITH RUNNING CODE SNIFFER ...'
-show_progress &
-progress_pid=$!
+// 2) phpcs (check PSR-12)
+$snifferReport = run(
+    '2) phpcs (check PSR-12)',
+    [$phpBin, 'vendor/bin/phpcs', '--standard=phpcs.xml'],
+    false
+);
+if ($snifferReport !== '') {
+    fwrite(STDERR,
+           COLOR_RED .
+           "PSR-12 violations detected:\n" .
+           $snifferReport .
+           "\nPlease fix ERRORS and WARNINGS before proceeding." .
+           COLOR_RESET .
+           "\n"
+    );
+    exit(1);
+}
 
-coderepair=$($PHP_BIN vendor/bin/phpcbf --standard="$base_directory/phpcs.xml")
-codesniffer=$($PHP_BIN vendor/bin/phpcs --standard="$base_directory/phpcs.xml")
+// 3) phpstan analyse (static analysis)
+run(
+    '3) phpstan analyse',
+    [$phpBin, 'vendor/bin/phpstan', 'analyse', '-c', 'phpstan.neon', '--memory-limit=1G']
+);
 
-kill $progress_pid > /dev/null 2>&1
-printf '\r\033[K'
-echo 'SOURCE CODE CHECK WITH CODE SNIFFER COMPLETED.'
-if [ -n "$codesniffer" ]; then
-  echo "
-The source code check has detected inconsistencies with the PSR-12 rules.
-Please review the following report and proceed to remove all ERRORS and WARNINGS.
-"
-  echo "$codesniffer"
-  echo
-  echo "SCRIPT TERMINATED WITH ERROR."
-  echo
-  exit 1
-fi
+// 4) phpunit tests (geoCodes)
+run(
+    '4) phpunit tests (geoCodes)',
+    [$phpBin, 'vendor/bin/phpunit', '--testsuite', 'geoCodes', '--testdox']
+);
 
-echo
-echo 'SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN ...'
-
-
-stan_output=$($PHP_BIN vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G)
-printf '\033[1A\r\033[K'
-printf '\033[1A\r\033[K'
-echo "SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN COMPLETED."
-if echo "$stan_output" | grep -q "ERROR"; then
-  echo "$stan_output"
-  echo
-  echo "SCRIPT TERMINATED WITH ERROR."
-  echo
-  exit 1
-fi
-
-echo
-echo 'UNIT TEST IN EXECUTION'
-$PHP_BIN vendor/bin/phpunit --testsuite geoCodes --testdox
-echo 'UNIT TEST COMPLETED'
-echo
-if [ $? -ne 0 ]; then
-  echo "The PHPUnit tests reported errors or failures."
-  echo "SCRIPT TERMINATED WITH ERROR."
-  echo
-  exit 1
-fi
-echo "The PHPUnit tests passed without any errors."
-echo
-echo "SCRIPT TERMINATED SUCCESSFULLY."
-echo
-echo "You can now commit and push your changes."
-echo
-exit 0
+fwrite(STDOUT,
+       "🎉 All checks passed successfully.\n" .
+       "You can now commit and push.\n"
+);
+exit(0);
