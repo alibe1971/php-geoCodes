@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Php command as version or use the default php
+PHP_BIN="${1:-php}"
+
+if ! command -v "$PHP_BIN" >/dev/null; then
+  echo "Error $PHP_BIN not found"
+  exit 1
+fi
+
+show_progress() {
+  chars=('▓')
+  index=0
+
+  while true; do
+    printf "%s" "${chars[index]}"
+    ((index++))
+    index=$((index % ${#chars[@]}))
+    sleep 0.1
+  done
+}
+
+script_path=$(readlink -f "$0")
+base_directory=$(dirname "$(dirname "$script_path")")
+
+cd "$base_directory"
+
+echo
+echo 'SOURCE CODE CHECK WITH RUNNING CODE SNIFFER ...'
+show_progress &
+progress_pid=$!
+
+coderepair=$($PHP_BIN vendor/bin/phpcbf --standard="$base_directory/phpcs.xml")
+codesniffer=$($PHP_BIN vendor/bin/phpcs --standard="$base_directory/phpcs.xml")
+
+kill $progress_pid > /dev/null 2>&1
+printf '\r\033[K'
+echo 'SOURCE CODE CHECK WITH CODE SNIFFER COMPLETED.'
+if [ -n "$codesniffer" ]; then
+  echo "
+The source code check has detected inconsistencies with the PSR-12 rules.
+Please review the following report and proceed to remove all ERRORS and WARNINGS.
+"
+  echo "$codesniffer"
+  echo
+  echo "SCRIPT TERMINATED WITH ERROR."
+  echo
+  exit 1
+fi
+
+echo
+echo 'SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN ...'
+
+
+stan_output=$($PHP_BIN vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G)
+printf '\033[1A\r\033[K'
+printf '\033[1A\r\033[K'
+echo "SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN COMPLETED."
+if echo "$stan_output" | grep -q "ERROR"; then
+  echo "$stan_output"
+  echo
+  echo "SCRIPT TERMINATED WITH ERROR."
+  echo
+  exit 1
+fi
+
+echo
+echo 'UNIT TEST IN EXECUTION'
+$PHP_BIN vendor/bin/phpunit --testsuite geoCodes --testdox
+echo 'UNIT TEST COMPLETED'
+echo
+if [ $? -ne 0 ]; then
+  echo "The PHPUnit tests reported errors or failures."
+  echo "SCRIPT TERMINATED WITH ERROR."
+  echo
+  exit 1
+fi
+echo "The PHPUnit tests passed without any errors."
+echo
+echo "SCRIPT TERMINATED SUCCESSFULLY."
+echo
+echo "You can now commit and push your changes."
+echo
+exit 0
