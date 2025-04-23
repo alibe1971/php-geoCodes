@@ -234,7 +234,8 @@ class Enquiries
         $indexes = [];
         foreach ($this->dataSetsStructure as $property => $structure) {
             if ($structure['access'] ===  Access::PUBLIC && $structure['index'] !== Index::NOTINDEXABLE) {
-                $indexes[$property] = 'Key usable in the `->withIndex(?string $index)` method' .
+                $indexes[$property] = 'Key usable in the `->withIndex(?string $index)` or ' .
+                    '`->orderBy(?string $index, ...)` methods' .
                     ($structure['index'] === Index::PRIMARY ? ' (default key)' : '');
             }
         }
@@ -244,7 +245,7 @@ class Enquiries
     /**
      * @return string
      */
-    private function getPrimaryKey(): string
+    public function getPrimaryKey(): string
     {
         $primary = '';
         foreach ($this->dataSetsStructure as $property => $structure) {
