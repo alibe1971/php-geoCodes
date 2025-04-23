@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Php command as version or use the default php
+PHP_BIN="${1:-php}"
+
+if ! command -v "$PHP_BIN" >/dev/null; then
+  echo "Error $PHP_BIN not found"
+  exit 1
+fi
+
 show_progress() {
   chars=('▓')
   index=0
@@ -22,8 +30,8 @@ echo 'SOURCE CODE CHECK WITH RUNNING CODE SNIFFER ...'
 show_progress &
 progress_pid=$!
 
-coderepair=$("vendor/bin/phpcbf" --standard="$base_directory/phpcs.xml")
-codesniffer=$("vendor/bin/phpcs" --standard="$base_directory/phpcs.xml")
+coderepair=$($PHP_BIN vendor/bin/phpcbf --standard="$base_directory/phpcs.xml")
+codesniffer=$($PHP_BIN vendor/bin/phpcs --standard="$base_directory/phpcs.xml")
 
 kill $progress_pid > /dev/null 2>&1
 printf '\r\033[K'
@@ -44,7 +52,7 @@ echo
 echo 'SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN ...'
 
 
-stan_output=$(vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G)
+stan_output=$($PHP_BIN vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G)
 printf '\033[1A\r\033[K'
 printf '\033[1A\r\033[K'
 echo "SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN COMPLETED."
@@ -58,7 +66,7 @@ fi
 
 echo
 echo 'UNIT TEST IN EXECUTION'
-vendor/bin/phpunit --testsuite geoCodes --testdox
+$PHP_BIN vendor/bin/phpunit --testsuite geoCodes --testdox
 echo 'UNIT TEST COMPLETED'
 echo
 if [ $? -ne 0 ]; then
