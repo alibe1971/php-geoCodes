@@ -26,7 +26,8 @@
                 <xs:element name="flags" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="svg" type="xs:string" minOccurs="0"/>
+                            <xs:element name="emoji" type="xs:string" minOccurs="1"/>
+                            <xs:element name="svg" type="xs:string" minOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>

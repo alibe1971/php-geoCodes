@@ -497,6 +497,23 @@ final class BaseDataStructureTest extends TestCase
                 'for the alpha2 `' . $cc['alpha2'] . '`'
             );
             $this->assertArrayHasKey(
+                'emoji',
+                $cc['flags'],
+                'The property `flags.emoji` is not present inside the `countries` data ' .
+                'for the alpha2 `' . $cc['alpha2'] . '`'
+            );
+            $this->assertIsString(
+                $cc['flags']['emoji'],
+                'The property `flags.emoji` is not a string inside the `countries` data ' .
+                'for the alpha2 `' . $cc['alpha2'] . '`'
+            );
+            $this->assertMatchesRegularExpression(
+                '/^\p{Regional_Indicator}{2}$/u',
+                $cc['flags']['emoji'],
+                'The property `flags.emoji` is not a Regional Indicator Symbols string inside the ' .
+                '`countries` data  for the alpha2 `' . $cc['alpha2'] . '`'
+            );
+            $this->assertArrayHasKey(
                 'svg',
                 $cc['flags'],
                 'The property `flags.svg` is not present inside the `countries` data ' .

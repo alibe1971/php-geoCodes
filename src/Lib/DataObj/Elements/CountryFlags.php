@@ -12,6 +12,7 @@ class CountryFlags extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
+            'emoji' => 'string',
             'svg' => 'string'
         ];
     }

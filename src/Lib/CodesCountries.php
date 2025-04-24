@@ -93,6 +93,15 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The flags in different format for the country'
         ],
+        'flags.emoji' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The flag in emoji (Regional_Indicator) format'
+        ],
         'flags.svg' => [
             'source' => Source::DATA,
             'type' => Type::STRING,

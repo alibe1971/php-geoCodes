@@ -47,7 +47,7 @@ class BaseDataObj extends StdClass implements IteratorAggregate
      */
     public function toJson(): string
     {
-        $jsonString = json_encode($this);
+        $jsonString = json_encode($this, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
         if ($jsonString === false) {
             throw new \RuntimeException('Failed to encode object to JSON.');
