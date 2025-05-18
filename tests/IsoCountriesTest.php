@@ -1611,6 +1611,18 @@ final class IsoCountriesTest extends TestCase
                 'where',
                 ['IT' => [ 'alpha2' => 'IT' ]]
             ],
+            [
+                "'flags.emoji', '=', '🇮🇪'",
+                ['flags.emoji', '=', '🇮🇪'],
+                'where',
+                ['IE' => [ 'alpha2' => 'IE' ]]
+            ],
+            [
+                "'flags.emoji', '=', '🇮🇹'",
+                ['flags.emoji', '=', '🇮🇹'],
+                'where',
+                ['IT' => [ 'alpha2' => 'IT' ]]
+            ],
         ];
     }
 }
