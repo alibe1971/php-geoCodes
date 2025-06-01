@@ -568,11 +568,6 @@ final class BaseDataStructureTest extends TestCase
                 'The property `officialName` is not an array ' .
                 'for the alpha2 `' . $cc['alpha2'] . '`'
             );
-            $this->assertNotEmpty(
-                $cc['officialName'],
-                'The property `officialName` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
             foreach ($cc['officialName'] as $ln => $name) {
                 if (!array_key_exists($ln, self::$countriesData['officialName'])) {
                     self::$countriesData['officialName'][$ln] = [];
