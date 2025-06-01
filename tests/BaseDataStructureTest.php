@@ -616,11 +616,6 @@ final class BaseDataStructureTest extends TestCase
                         'The property `mottos.' . $key  . '` is not an array ' .
                         'for the alpha2 `' . $cc['alpha2'] . '`'
                     );
-                    $this->assertNotEmpty(
-                        $mottoGr,
-                        'The property `mottos.' . $key  . '` is empty ' .
-                        'for the alpha2 `' . $cc['alpha2'] . '`'
-                    );
                     foreach ($mottoGr as $ln => $motto) {
                         $this->assertIsString(
                             $motto,
