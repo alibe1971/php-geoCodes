@@ -57,7 +57,7 @@ class Country extends BaseDataObj
                 "timeZones" => [
                     "@tag" => "tz"
                 ],
-                "locales" => [
+                "localesIcu" => [
                     "@tag" => "locale"
                 ]
             ]
@@ -84,7 +84,7 @@ class Country extends BaseDataObj
             'ccTld' => 'string',
             'timeZones' => TimeZones::class,
             'languages' => 'string', //'string',
-            'locales' => Locales::class,
+            'localesIcu' => Locales::class,
             'demonyms' => Demonysm::class,
             'otherAppsIds' => CountryOtherAppsIds::class,
 

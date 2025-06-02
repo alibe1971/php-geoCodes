@@ -210,14 +210,14 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The languages used in the country'
         ],
-        'locales' => [
+        'localesIcu' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
             'nullable' => false,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
             'search' => false,
-            'description' => 'The PHP locales used in the country'
+            'description' => 'The PHP locales ICU standard used in the country'
         ],
         'demonyms' => [
             'source' => Source::TRANSLATIONS,

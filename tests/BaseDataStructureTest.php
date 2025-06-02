@@ -795,39 +795,25 @@ final class BaseDataStructureTest extends TestCase
             );
 
             $this->assertArrayHasKey(
-                'locales',
+                'localesIcu',
                 $cc,
-                'The property `locales` is not present inside the `countries` data ' .
+                'The property `localesIcu` is not present inside the `countries` data ' .
                 'for the alpha2 `' . $cc['alpha2'] . '`'
             );
             $this->assertIsArray(
-                $cc['locales'],
-                'The property `locales` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['locales'],
-                'The property `locales` is empty ' .
+                $cc['localesIcu'],
+                'The property `localesIcu` is not an array ' .
                 'for the alpha2 `' . $cc['alpha2'] . '`'
             );
             $locs = [];
-            foreach ($cc['locales'] as $loc) {
+            foreach ($cc['localesIcu'] as $loc) {
                 $this->assertNotContains(
                     $loc,
                     $locs,
-                    'The property `locales` with value `'
+                    'The property `localesIcu` with value `'
                     . $loc .
-                    '` already exits (duplicated) in `locales` for the alpha2 `' . $cc['alpha2'] . '`'
+                    '` already exits (duplicated) in `localesIcu` for the alpha2 `' . $cc['alpha2'] . '`'
                 );
-//                $this->assertContains(  // [TODO] DA METTERE ANCHE LA LISTA DEI LOCALES
-//                    $loc,
-//                    self::$countriesData['currencies'],
-//                    'The property `currencies.widelyAccepted` with value `'
-//                    . $loc .
-//                    '` for the alpha2 `' . $cc['alpha2'] . '` ' .
-//                    'is not in the list of the ISO currencies'
-//                );
-
                 self::$countriesData['ln'][] = $loc;
                 $locs[] = $loc;
             }

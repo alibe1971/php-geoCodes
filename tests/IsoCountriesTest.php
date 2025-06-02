@@ -52,7 +52,7 @@ final class IsoCountriesTest extends TestCase
             'dialCodes.main',
             'dialCodes.exceptions',
             'timeZones',
-            'locales',
+            'localesIcu',
             'demonyms'
         ]
     ];
@@ -1462,14 +1462,14 @@ final class IsoCountriesTest extends TestCase
                 ['ID' => [ 'alpha2' => 'ID' ]]
             ],
             [
-                "'locales', 'jv-id'",
-                ['locales', 'jv-id'],
+                "'localesIcu', 'id-id'",
+                ['localesIcu', 'id-id'],
                 'where',
                 ['ID' => [ 'alpha2' => 'ID' ]]
             ],
             [
-                "'locales', 'like', 'jv-id'",
-                ['locales', 'like', 'jv-id'],
+                "'localesIcu', 'like', 'id-id'",
+                ['localesIcu', 'like', 'id-id'],
                 'where',
                 ['ID' => [ 'alpha2' => 'ID' ]]
             ],
