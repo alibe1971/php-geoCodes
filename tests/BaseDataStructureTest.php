@@ -122,14 +122,13 @@ final class BaseDataStructureTest extends TestCase
             $config['settings']['languages']['inPackage'],
             'The property `inPackage` is empty'
         );
-        $this->assertArrayHasKey(
+        $this->assertContains(
             self::$defaultLanguage,
             $config['settings']['languages']['inPackage'],
             'The default language `'
-                . self::$defaultLanguage .
-                '` is not present inside the configuration set of the `languages` packages'
+            . self::$defaultLanguage .
+            '` is not present inside the configuration set of the `languages` packages'
         );
-
         self::$Config = $config;
     }
 
@@ -874,7 +873,7 @@ final class BaseDataStructureTest extends TestCase
         $currencies = [];
         $geosets = [];
         $languages = [];
-        foreach (self::$Config['settings']['languages']['inPackage'] as $lang => $locale) {
+        foreach (self::$Config['settings']['languages']['inPackage'] as $lang) {
             $transDir = self::$dataDir . '/Translations/' . $lang . '/';
             self::$countriesData['translations']['countries'][$lang] = [
                 'name' => [],

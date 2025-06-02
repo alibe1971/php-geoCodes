@@ -46,7 +46,7 @@ class BaseCode
      */
     public function getAvailableLanguages(): array
     {
-        return array_keys($this->config->settings->languages->inPackage->toArray());
+        return $this->config->settings->languages->inPackage->toArray();
     }
 
     /**
@@ -66,7 +66,7 @@ class BaseCode
      */
     protected function getCurrentLocale(): string
     {
-        return $this->config->settings->languages->inPackage->{$this->Language->current};
+        return preg_replace('/-/', '_', $this->Language->current);
     }
 
     /**
@@ -92,7 +92,7 @@ class BaseCode
      */
     public function setDefaultLanguage(string $language): BaseCode
     {
-        if (empty($this->config->settings->languages->inPackage->{$language})) {
+        if (!in_array($language, $this->getAvailableLanguages())) {
             throw new ConfigException(ConfigCodes::LANGUAGE_NOT_AVAILABLE, [$language]);
         }
         $this->Language->default = $language;
@@ -117,7 +117,7 @@ class BaseCode
      */
     public function useLanguage(string $language): BaseCode
     {
-        $this->Language->current = (empty($this->config->settings->languages->inPackage->{$language})) ?
+        $this->Language->current = (!in_array($language, $this->getAvailableLanguages())) ?
             $this->Language->default : $language;
         return $this;
     }
