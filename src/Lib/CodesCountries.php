@@ -129,6 +129,42 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The mottos of the country'
         ],
+        'mottos.official' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The official mottos of the country'
+        ],
+        'mottos.popular' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The popular mottos of the country'
+        ],
+        'mottos.royal' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The royal mottos of the country'
+        ],
+        'mottos.presidential' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The presidential mottos of the country'
+        ],
         'currencies' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
