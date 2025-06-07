@@ -33,7 +33,19 @@ class Country extends BaseDataObj
                     "official" => [
                         "@attribute" => "lang",
                         "@tag" => "motto"
-                    ]
+                    ],
+                    "popular" => [
+                        "@attribute" => "lang",
+                        "@tag" => "motto"
+                    ],
+                    "royal" => [
+                        "@attribute" => "lang",
+                        "@tag" => "motto"
+                    ],
+                    "presidential" => [
+                        "@attribute" => "lang",
+                        "@tag" => "motto"
+                    ],
                 ],
                 "currencies" => [
                     "legalTenders" => [
