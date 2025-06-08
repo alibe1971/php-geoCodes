@@ -4,7 +4,7 @@ namespace Alibe\GeoCodes\Lib\DataObj;
 
 use Alibe\GeoCodes\Lib\DataObj\Elements\Currency;
 
-class Currencies extends BaseDataObj
+class Currencies extends BaseDataObj implements \JsonSerializable
 {
     /**
      * @var string
@@ -33,5 +33,35 @@ class Currencies extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [ [Currency::class] ];
+    }
+
+
+    /**
+     * @return array<string>
+     */
+    public function jsonSerialize(): array
+    {
+        $result = [];
+
+        foreach (get_object_vars($this) as $key => $currencies) {
+            if ($key === 'xmlRootElement') {
+                continue;
+            }
+
+            if ($currencies instanceof \JsonSerializable) {
+                $result[$key] = $currencies->jsonSerialize();
+            } elseif (is_array($currencies)) {
+                $result[$key] = array_map(function ($item) {
+                    if ($item instanceof \JsonSerializable) {
+                        return $item->jsonSerialize();
+                    }
+                    return $item;
+                }, $currencies);
+            } else {
+                $result[$key] = $currencies;
+            }
+        }
+
+        return $result;
     }
 }
