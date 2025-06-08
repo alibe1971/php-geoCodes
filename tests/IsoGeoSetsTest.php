@@ -152,6 +152,28 @@ final class IsoGeoSetsTest extends TestCase
         }
     }
 
+
+    /**
+     * @test
+     * @testdox  ==>  Test the json serializing.
+     * @depends testToGetListOfGeoSets
+     * @return void
+     * @throws QueryException
+     */
+    public function testJsonSerializing(): void
+    {
+        $geoSets = self::$geoCodes->geoSets();
+
+        $withoutIndex = $geoSets->get()->toJson();
+        $decodedWithoutIndex = json_decode($withoutIndex, true);
+        $this->assertTrue(Utils::isList($decodedWithoutIndex));
+
+        $withIndex = $geoSets->withIndex('name')->get()->toJson();
+        $decodedWithIndex = json_decode($withIndex, true);
+        $this->assertFalse(Utils::isList($decodedWithIndex));
+        $this->assertArrayHasKey('Europe', $decodedWithIndex);
+    }
+
     /**
      * @test
      * @testdox Test the `->get()->toYaml()` feature.

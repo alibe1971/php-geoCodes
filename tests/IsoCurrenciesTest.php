@@ -159,6 +159,27 @@ final class IsoCurrenciesTest extends TestCase
 
     /**
      * @test
+     * @testdox  ==>  Test the json serializing.
+     * @depends testToGetListOfCurrencies
+     * @return void
+     * @throws QueryException
+     */
+    public function testJsonSerializing(): void
+    {
+        $currencies = self::$geoCodes->currencies();
+
+        $withoutIndex = $currencies->get()->toJson();
+        $decodedWithoutIndex = json_decode($withoutIndex, true);
+        $this->assertTrue(Utils::isList($decodedWithoutIndex));
+
+        $withIndex = $currencies->withIndex('name')->get()->toJson();
+        $decodedWithIndex = json_decode($withIndex, true);
+        $this->assertFalse(Utils::isList($decodedWithIndex));
+        $this->assertArrayHasKey('Euro', $decodedWithIndex);
+    }
+
+    /**
+     * @test
      * @testdox Test the `->get()->toYaml()` feature.
      * @depends testToGetListOfCurrencies
      * @return void

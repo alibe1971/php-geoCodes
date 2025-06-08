@@ -185,6 +185,27 @@ final class IsoCountriesTest extends TestCase
 
     /**
      * @test
+     * @testdox  ==>  Test the json serializing.
+     * @depends testToGetListOfCountries
+     * @return void
+     * @throws QueryException
+     */
+    public function testJsonSerializing(): void
+    {
+        $countries = self::$geoCodes->countries();
+
+        $withoutIndex = $countries->get()->toJson();
+        $decodedWithoutIndex = json_decode($withoutIndex, true);
+        $this->assertTrue(Utils::isList($decodedWithoutIndex));
+
+        $withIndex = $countries->withIndex('name')->get()->toJson();
+        $decodedWithIndex = json_decode($withIndex, true);
+        $this->assertFalse(Utils::isList($decodedWithIndex));
+        $this->assertArrayHasKey('Ireland', $decodedWithIndex);
+    }
+
+    /**
+     * @test
      * @testdox Test the `->get()->toYaml()` feature.
      * @depends testToGetListOfCountries
      * @return void
