@@ -43,8 +43,8 @@ final class IsoGeoSetsTest extends TestCase
      * @var array<int, string> $expectedLimitTest
      */
     private static array $expectedLimitTest = [
-        'GEOG-AS-SO',
-        'GEOG-AS-WE'
+        'GEOG-AS-SE',
+        'GEOG-AS-SO'
     ];
 
     /**
@@ -52,8 +52,8 @@ final class IsoGeoSetsTest extends TestCase
      */
     private static array $expectedOrderByTest = [
         'internalCode' => [
-            'ASC' => 'CONV-G20',
-            'DESC' => 'ZONE-EZ',
+            'ASC' => 'CONV-EZ',
+            'DESC' => 'ORGS-WTO',
         ],
         'name' => [
             'ASC' => 'Africa',
@@ -896,10 +896,10 @@ final class IsoGeoSetsTest extends TestCase
             'CONV-G7'       => [ 'internalCode' => 'CONV-G7' ],
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO'],
             'CONV-SCHENGEN' => [ 'internalCode' => 'CONV-SCHENGEN' ],
-            'ZONE-EZ'       => [ 'internalCode' => 'ZONE-EZ' ]
+            'CONV-EZ'       => [ 'internalCode' => 'CONV-EZ' ]
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15, ['CONV-SCHENGEN', 'ZONE-EZ']);
+        $geoSets->fetch('CONV-G7', 15, ['CONV-SCHENGEN', 'CONV-EZ']);
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
         $this->assertEquals($cfr, $result);
     }
@@ -913,7 +913,7 @@ final class IsoGeoSetsTest extends TestCase
     {
         $geoSets = self::$geoCodes->geoSets();
         try {
-            $geoSets->fetch('CONV-G7', 15, [['CONV-SCHENGEN'], ['ZONE-EZ']]);
+            $geoSets->fetch('CONV-G7', 15, [['CONV-SCHENGEN'], ['CONV-EZ']]);
             $this->fail('The fetch is considered valid');
         } catch (QueryException $e) {
             $this->assertInstanceOf(QueryException::class, $e);
@@ -933,10 +933,10 @@ final class IsoGeoSetsTest extends TestCase
             'CONV-G7'       => [ 'internalCode' => 'CONV-G7' ],
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO'],
             'CONV-SCHENGEN' => [ 'internalCode' => 'CONV-SCHENGEN' ],
-            'ZONE-EZ'       => [ 'internalCode' => 'ZONE-EZ' ]
+            'CONV-EZ'       => [ 'internalCode' => 'CONV-EZ' ]
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'ZONE-EZ']);
+        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'CONV-EZ']);
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
         $this->assertEquals($cfr, $result);
     }
@@ -952,7 +952,7 @@ final class IsoGeoSetsTest extends TestCase
         $geoSets = self::$geoCodes->geoSets();
         $fetchAll = $geoSets->fetchAll()->get();
         $fetchStar = $geoSets->fetch('*')->get();
-        $fetchWithStar = $geoSets->fetch('CONV-G7', 15, ['CONV-SCHENGEN', 'ZONE-EZ'], '*')->get();
+        $fetchWithStar = $geoSets->fetch('CONV-G7', 15, ['CONV-SCHENGEN', 'CONV-EZ'], '*')->get();
         $this->assertEquals($fetchAll, self::$geoSetsList);
         $this->assertEquals($fetchStar, self::$geoSetsList);
         $this->assertEquals($fetchWithStar, self::$geoSetsList);
@@ -980,10 +980,10 @@ final class IsoGeoSetsTest extends TestCase
             'CONV-G7'       => [ 'internalCode' => 'CONV-G7' ],
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO'],
             'CONV-SCHENGEN' => [ 'internalCode' => 'CONV-SCHENGEN' ],
-            'ZONE-EZ'       => [ 'internalCode' => 'ZONE-EZ' ]
+            'CONV-EZ'       => [ 'internalCode' => 'CONV-EZ' ]
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'ZONE-EZ']);
+        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'CONV-EZ']);
         $geoSets->merge();
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
         $this->assertEquals($cfr, $result);
@@ -1001,10 +1001,10 @@ final class IsoGeoSetsTest extends TestCase
             'CONV-G7'       => [ 'internalCode' => 'CONV-G7' ],
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO'],
             'CONV-SCHENGEN' => [ 'internalCode' => 'CONV-SCHENGEN' ],
-            'ZONE-EZ'       => [ 'internalCode' => 'ZONE-EZ' ]
+            'CONV-EZ'       => [ 'internalCode' => 'CONV-EZ' ]
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch(15)->fetch(['ZONE-EZ']);
+        $geoSets->fetch(15)->fetch(['CONV-EZ']);
         $geoSets->merge();
         $geoSets->fetch('CONV-G7')->fetch(['CONV-SCHENGEN']);
         $geoSets->merge();
@@ -1024,7 +1024,7 @@ final class IsoGeoSetsTest extends TestCase
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO']
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'ZONE-EZ', 'GEOG-AF-NO']);
+        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'CONV-EZ', 'GEOG-AF-NO']);
         $geoSets->intersect();
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
         $this->assertEquals($cfr, $result);
@@ -1041,9 +1041,9 @@ final class IsoGeoSetsTest extends TestCase
             'GEOG-AF-NO'    => [ 'internalCode' => 'GEOG-AF-NO']
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'ZONE-EZ', 'GEOG-AF-NO']);
+        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'CONV-EZ', 'GEOG-AF-NO']);
         $geoSets->intersect();
-        $geoSets->fetch('CONV-G7', 'GEOG-AF-NO')->fetch(['CONV-SCHENGEN', 'ZONE-EZ', 15]);
+        $geoSets->fetch('CONV-G7', 'GEOG-AF-NO')->fetch(['CONV-SCHENGEN', 'CONV-EZ', 15]);
         $geoSets->intersect();
         $geoSets->intersect();
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
@@ -1081,10 +1081,10 @@ final class IsoGeoSetsTest extends TestCase
         $cfr = [
             'CONV-G7'       => [ 'internalCode' => 'CONV-G7' ],
             'CONV-SCHENGEN' => [ 'internalCode' => 'CONV-SCHENGEN' ],
-            'ZONE-EZ'       => [ 'internalCode' => 'ZONE-EZ' ]
+            'CONV-EZ'       => [ 'internalCode' => 'CONV-EZ' ]
         ];
         $geoSets = self::$geoCodes->geoSets();
-        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'ZONE-EZ', 'GEOG-AF-NO']);
+        $geoSets->fetch('CONV-G7', 15)->fetch(['CONV-SCHENGEN', 'CONV-EZ', 'GEOG-AF-NO']);
         $geoSets->complement();
         $result = $geoSets->withIndex('internalCode')->select('internalCode')->get()->toArray();
         $this->assertEquals($cfr, $result);
@@ -1399,13 +1399,13 @@ final class IsoGeoSetsTest extends TestCase
                 "'tags', 'zone'",
                 ['tags', 'zone'],
                 'where',
-                ['ZONE-EZ' => [ 'internalCode' => 'ZONE-EZ' ]]
+                ['CONV-EZ' => [ 'internalCode' => 'CONV-EZ' ]]
             ],
             [
                 "[['countryCodes', 'IE'], ['tags', 'zone']]",
                 [[['countryCodes', 'IE'], ['tags', 'zone']]],
                 'where',
-                ['ZONE-EZ' => [ 'internalCode' => 'ZONE-EZ' ]]
+                ['CONV-EZ' => [ 'internalCode' => 'CONV-EZ' ]]
             ],
             [
                 "'name', 'like', 'Channel%'",
@@ -1441,7 +1441,7 @@ final class IsoGeoSetsTest extends TestCase
                 "[['name', 'like', '%Euro%'], ['name', 'not like', '%Europe%']]",
                 [[['name', 'like', '%Euro%'], ['name', 'not like', '%Europe%']]],
                 'where',
-                ['ZONE-EZ' => [ 'internalCode' => 'ZONE-EZ' ]]
+                ['CONV-EZ' => [ 'internalCode' => 'CONV-EZ' ]]
             ],
             [
                 "[['unM49', '<=', 2], ['unM49', 'is not null']]",

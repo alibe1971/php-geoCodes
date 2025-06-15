@@ -1144,7 +1144,7 @@ final class IsoCountriesTest extends TestCase
         ];
         /** Countries of the European Union that are not part of the eurozone  */
         $countries = self::$geoCodes->countries();
-        $countries->fetch('ORGS-EU')->fetch('ZONE-EZ');
+        $countries->fetch('ORGS-EU')->fetch('CONV-EZ');
         $countries->complement();
         $result = $countries->withIndex('alpha2')->select('alpha2')->get()->toArray();
         $this->assertEquals($cfr, $result);
@@ -1178,7 +1178,7 @@ final class IsoCountriesTest extends TestCase
          * - European countries that are not part of the European Union
          */
         $countries = self::$geoCodes->countries();
-        $countries->fetch('ORGS-EU')->fetch('ZONE-EZ');
+        $countries->fetch('ORGS-EU')->fetch('CONV-EZ');
         $countries->complement();
         $countries->fetch(150)->fetch('ORGS-EU');
         $countries->complement();
