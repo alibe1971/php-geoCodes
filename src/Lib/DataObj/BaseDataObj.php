@@ -175,7 +175,7 @@ class BaseDataObj extends StdClass implements IteratorAggregate
                         }
                         break;
                     default:
-                        throw new \Error('ELIBE');
+                        throw new \Error('Type not allowed');
                 }
             }
         }
@@ -256,9 +256,9 @@ class BaseDataObj extends StdClass implements IteratorAggregate
                 if (is_array($value)) {
                     $subElement = $dom->createElement($transformedKey);
                     $element->appendChild($subElement);
-
                     $newRootElement = $transformedKey;
-                    $newMap = isset($map[$rootElement]) && is_array($map[$rootElement]) ? $map[$rootElement] : [];
+                    $newMap = (isset($map['@children'][$key]) ? $map['@children'] : ($map[$rootElement] ?? []));
+
                     $this->arrayToXml($value, $subElement, $dom, $newRootElement, $newMap);
                 } else {
                     if (isset($typeKey) && array_key_exists($transformedKey, $typeKey)) {
@@ -287,6 +287,20 @@ class BaseDataObj extends StdClass implements IteratorAggregate
             }
         }
     }
+
+    protected static function isFlatList(array $array): bool
+    {
+        foreach ($array as $v) {
+            if (is_array($v)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+
 
     /**
      * @param string $xmlString

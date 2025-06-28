@@ -55,6 +55,14 @@ class Country extends BaseDataObj
                         "@tag" => "currency"
                     ]
                 ],
+                "ccIdn" => [
+                    "@tag" => "idn",
+                    '@children' => [
+                        "regionsOfUse" => [
+                            "@tag" => "region"
+                        ]
+                    ]
+                ],
                 "dialCodes" => [
                     "main" => [
                         "@tag" => "dial"
@@ -94,6 +102,7 @@ class Country extends BaseDataObj
             'currencies' => CountryCurrencies::class,
             'dialCodes' => CountryDialCodes::class,
             'ccTld' => 'string',
+            'ccIdn' => CountryCcIdn::class,
             'timeZones' => TimeZones::class,
             'languages' => 'string', //'string',
             'localesIcu' => Locales::class,

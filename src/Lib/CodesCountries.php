@@ -228,6 +228,15 @@ class CodesCountries extends Enquiries
             'search' => true,
             'description' => 'The top level domain country code (if it exists)'
         ],
+        'ccIdn' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The top level domain country code IDN (if it exists)'
+        ],
         'timeZones' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
