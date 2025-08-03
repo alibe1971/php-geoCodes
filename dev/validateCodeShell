@@ -67,9 +67,10 @@ fi
 echo
 echo 'UNIT TEST IN EXECUTION'
 $PHP_BIN vendor/bin/phpunit --testsuite geoCodes --testdox
+status=$?
 echo 'UNIT TEST COMPLETED'
 echo
-if [ $? -ne 0 ]; then
+if [ $status -ne 0 ]; then
   echo "The PHPUnit tests reported errors or failures."
   echo "SCRIPT TERMINATED WITH ERROR."
   echo
