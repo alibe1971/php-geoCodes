@@ -4,7 +4,7 @@ namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 
-class CountryOtherAppsIds extends BaseDataObj
+class CountryOtherAppsIdsOMS extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -12,9 +12,8 @@ class CountryOtherAppsIds extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'geoNamesOrg' => 'string',
-            'wikiData' => 'string',
-            'openStreetMap' => CountryOtherAppsIdsOMS::class
+            'type' => 'string',
+            'id' => 'string'
         ];
     }
 }

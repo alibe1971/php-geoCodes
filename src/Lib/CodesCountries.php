@@ -300,6 +300,42 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'Ids for geonames.org'
         ],
+        'otherAppsIds.wikiData' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'Ids for wiki data'
+        ],
+        'otherAppsIds.openStreetMap' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'Ids for Open Street Map'
+        ],
+        'otherAppsIds.openStreetMap.type' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'Type for Open Street Map'
+        ],
+        'otherAppsIds.openStreetMap.id' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'Id for Open Street Map'
+        ],
         'keywords' => [
             'source' => Source::TRANSLATIONS,
             'type' => Type::ARRAY,
