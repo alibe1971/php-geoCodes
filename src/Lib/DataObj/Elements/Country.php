@@ -64,7 +64,10 @@ class Country extends BaseDataObj
                     ]
                 ],
                 "dialCodes" => [
-                    "main" => [
+                    "deJure" => [
+                        "@tag" => "dial"
+                    ],
+                    "deFacto" => [
                         "@tag" => "dial"
                     ],
                     "exceptions" => [

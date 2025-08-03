@@ -3,9 +3,8 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\DataObj\DialCodes;
 
-class CountryDialCodes extends BaseDataObj
+class CountryDialCodesExceptionsItem extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -13,9 +12,8 @@ class CountryDialCodes extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'deJure' => DialCodes::class,
-            'deFacto' => DialCodes::class,
-            'exceptions' => CountryDialCodesExceptions::class,
+            'code' => 'string',
+            'origin' => 'string'
         ];
     }
 }

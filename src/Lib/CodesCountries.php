@@ -201,14 +201,23 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The dial codes for phone call to the country'
         ],
-        'dialCodes.main' => [
+        'dialCodes.deJure' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
             'nullable' => false,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
             'search' => false,
-            'description' => 'The main dial codes for phone call to the country'
+            'description' => 'The de jure dial codes for phone call to the country'
+        ],
+        'dialCodes.deFacto' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The de facto dial codes for phone call to the country'
         ],
         'dialCodes.exceptions' => [
             'source' => Source::DATA,
