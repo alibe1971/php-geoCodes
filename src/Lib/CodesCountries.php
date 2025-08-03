@@ -147,6 +147,33 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The popular mottos of the country'
         ],
+        'mottos.founding' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The founding mottos of the country'
+        ],
+        'mottos.military' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The military mottos of the country'
+        ],
+        'mottos.historical' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The historical mottos of the country'
+        ],
         'mottos.royal' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,

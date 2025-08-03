@@ -12,10 +12,13 @@ class CountryMottos extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'official' => Languages::class,
-            'popular' => Languages::class,
-            'royal' => Languages::class,
-            'presidential' => Languages::class,
+            'official' => CountryMottosStructure::class,
+            'popular' => CountryMottosStructure::class,
+            'founding' => CountryMottosStructure::class,
+            'military' => CountryMottosStructure::class,
+            'historical' => CountryMottosStructure::class,
+            'royal' => CountryMottosStructure::class,
+            'presidential' => CountryMottosStructure::class,
         ];
     }
 }
