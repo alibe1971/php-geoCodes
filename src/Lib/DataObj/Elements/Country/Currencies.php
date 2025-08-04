@@ -3,9 +3,9 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
+use Alibe\GeoCodes\Lib\DataObj\Currencies as CurrencyList;
 
-class CcIdnItem extends BaseDataObj
+class Currencies extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -13,10 +13,8 @@ class CcIdnItem extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'unicode' => Type::STRING,
-            'punycode' => Type::STRING,
-            'language' => Type::STRING,
-            'regionsOfUse' => CcIdnItemRegions::class
+            'legalTenders' => CurrencyList::class,
+            'widelyAccepted' => CurrencyList::class,
         ];
     }
 }

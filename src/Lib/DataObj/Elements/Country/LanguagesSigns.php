@@ -3,9 +3,9 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
+use Alibe\GeoCodes\Lib\DataObj\Elements\SerializedArray;
 
-class CcIdnItem extends BaseDataObj
+class LanguagesSigns extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -13,10 +13,9 @@ class CcIdnItem extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'unicode' => Type::STRING,
-            'punycode' => Type::STRING,
-            'language' => Type::STRING,
-            'regionsOfUse' => CcIdnItemRegions::class
+            'official' => SerializedArray::class,
+            'recognized' => SerializedArray::class,
+            'used' => SerializedArray::class,
         ];
     }
 }

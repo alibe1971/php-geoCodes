@@ -1,10 +1,11 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
-class CountryOtherAppsIdsOMS extends BaseDataObj
+class Flags extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -12,8 +13,8 @@ class CountryOtherAppsIdsOMS extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'type' => 'string',
-            'id' => 'string'
+            'emoji' => Type::STRING,
+            'svg' => Type::STRING
         ];
     }
 }

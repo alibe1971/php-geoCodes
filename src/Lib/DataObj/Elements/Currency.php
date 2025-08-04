@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class Currency extends BaseDataObj
 {
@@ -27,11 +28,11 @@ class Currency extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'isoAlpha' => 'string',
-            'isoNumber' => 'string',
-            'name' => 'string',
-            'symbol' => 'string',
-            'decimal' => 'integer'
+            'isoAlpha' => Type::STRING,
+            'isoNumber' => Type::STRING,
+            'name' => Type::STRING,
+            'symbol' => Type::STRING,
+            'decimal' => Type::INTEGER
         ];
     }
 }

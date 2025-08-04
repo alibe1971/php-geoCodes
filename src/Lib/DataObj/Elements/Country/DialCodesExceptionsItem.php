@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class DialCodesExceptionsItem extends BaseDataObj
 {
@@ -12,8 +13,8 @@ class DialCodesExceptionsItem extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'code' => 'string',
-            'origin' => 'string'
+            'code' => Type::STRING,
+            'origin' => Type::STRING
         ];
     }
 }

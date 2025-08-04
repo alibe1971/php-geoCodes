@@ -12,8 +12,24 @@ class Countries extends BaseDataObj implements \JsonSerializable
     protected string $xmlRootElement = "countries";
 
     /**
-     * @return  array<string, array<string, array<string, array<string, array<string, string>|string>>|string>>
+     * @phpstan-return array<
+     *     string,
+     *     array<
+     *         string,
+     *         array<
+     *             string,
+     *             array<
+     *                 string,
+     *                 array<
+     *                     string,
+     *                     array<string, string> | string
+     *                 > | string
+     *             >
+     *         > | string
+     *     >
+     * >
      */
+
     protected function getXmlMap(): array
     {
         return [

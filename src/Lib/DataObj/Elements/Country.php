@@ -9,6 +9,7 @@ use Alibe\GeoCodes\Lib\DataObj\Elements\Country\OtherAppsIds;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\CcIdn;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\DialCodes;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Mottos;
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class Country extends BaseDataObj
 {
@@ -97,21 +98,21 @@ class Country extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'alpha2' => 'string',
-            'alpha3' => 'string',
-            'unM49' => 'string',
-            'name' => 'string',
-            'fullName' => 'string',
+            'alpha2' => Type::STRING,
+            'alpha3' => Type::STRING,
+            'unM49' => Type::STRING,
+            'name' => Type::STRING,
+            'fullName' => Type::STRING,
             'officialName' => Standard::class,
             'flags' => Flags::class,
-            'dependency' => 'string',
+            'dependency' => Type::STRING,
             'mottos' => Mottos::class,
             'currencies' => Currencies::class,
             'dialCodes' => DialCodes::class,
-            'ccTld' => 'string',
+            'ccTld' => Type::STRING,
             'ccIdn' => CcIdn::class,
             'timeZones' => SerializedArray::class,
-            'languages' => 'string', //'string',
+            'languages' => Type::STRING, //'string',
             'localesIcu' => SerializedArray::class,
             'demonyms' => SerializedArray::class,
             'otherAppsIds' => OtherAppsIds::class,

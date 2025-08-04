@@ -288,6 +288,10 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         }
     }
 
+    /**
+     * @param array<array-key, mixed> $array
+     * @return bool
+     */
     protected static function isFlatList(array $array): bool
     {
         foreach ($array as $v) {

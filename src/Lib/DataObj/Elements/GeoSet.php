@@ -37,8 +37,8 @@ class GeoSet extends BaseDataObj
             'internalCode' => 'string',
             'unM49' => 'string',
             'name' => 'string',
-            'tags' => GeoSetTags::class,
-            'countryCodes' => GeoSetCountryCodes::class
+            'tags' => SerializedArray::class,
+            'countryCodes' => SerializedArray::class
         ];
     }
 }
