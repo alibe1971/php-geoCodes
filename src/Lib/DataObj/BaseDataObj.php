@@ -2,7 +2,6 @@
 
 namespace Alibe\GeoCodes\Lib\DataObj;
 
-use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 use Alibe\GeoCodes\Lib\Enums\Exceptions\GeneralCodes;
 use Alibe\GeoCodes\Lib\Exceptions\GeneralException;
 use DOMDocument;
@@ -166,10 +165,11 @@ class BaseDataObj extends StdClass implements IteratorAggregate
             }
 
             if (array_key_exists($parserKey, $data)) {
-                switch (gettype($parserValue)) {
-                    case Type::INTEGER:
-                    case Type::STRING:
-                        if (class_exists($parserValue)) {
+                $valueType = gettype($parserValue);
+
+                switch ($valueType) {
+                    case 'string':
+                        if (class_exists((string) $parserValue)) {
                             /** @phpstan-ignore-next-line */
                             $this->{$parserKey} = (new $parserValue())->from($data[$parserKey]);
                         } else {
