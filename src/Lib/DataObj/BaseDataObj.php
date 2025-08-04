@@ -2,6 +2,7 @@
 
 namespace Alibe\GeoCodes\Lib\DataObj;
 
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 use Alibe\GeoCodes\Lib\Enums\Exceptions\GeneralCodes;
 use Alibe\GeoCodes\Lib\Exceptions\GeneralException;
 use DOMDocument;
@@ -166,7 +167,8 @@ class BaseDataObj extends StdClass implements IteratorAggregate
 
             if (array_key_exists($parserKey, $data)) {
                 switch (gettype($parserValue)) {
-                    case 'string':
+                    case Type::INTEGER:
+                    case Type::STRING:
                         if (class_exists($parserValue)) {
                             /** @phpstan-ignore-next-line */
                             $this->{$parserKey} = (new $parserValue())->from($data[$parserKey]);
@@ -175,7 +177,11 @@ class BaseDataObj extends StdClass implements IteratorAggregate
                         }
                         break;
                     default:
-                        throw new \Error('Type not allowed');
+                        throw new \Error(sprintf(
+                            'Type "%s" not allowed for key "%s".',
+                            $valueType,
+                            $parserKey
+                        ));
                 }
             }
         }

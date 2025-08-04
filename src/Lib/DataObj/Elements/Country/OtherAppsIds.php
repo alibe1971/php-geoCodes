@@ -15,7 +15,7 @@ class OtherAppsIds extends BaseDataObj
         return [
             'geoNamesOrg' => Type::INTEGER,
             'wikiData' => Type::STRING,
-            'openStreetMap' => OtherAppsIdsOsm::class
+            'openStreetMapRelation' => Type::INTEGER
         ];
     }
 }

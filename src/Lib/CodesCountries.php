@@ -291,33 +291,114 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The languages used in the country'
         ],
-//        'languages.official' => [
-//            'source' => Source::DATA,
-//            'type' => Type::OBJECT,
-//            'nullable' => false,
-//            'index' => Index::NOTINDEXABLE,
-//            'access' => Access::PUBLIC,
-//            'search' => false,
-//            'description' => 'The Official languages used in the country'
-//        ],
-//        'languages.official.deJure' => [
-//            'source' => Source::DATA,
-//            'type' => Type::OBJECT,
-//            'nullable' => false,
-//            'index' => Index::NOTINDEXABLE,
-//            'access' => Access::PUBLIC,
-//            'search' => false,
-//            'description' => 'The Official de jure languages used in the country'
-//        ],
-//        'languages.official.deFacto' => [
-//            'source' => Source::DATA,
-//            'type' => Type::OBJECT,
-//            'nullable' => false,
-//            'index' => Index::NOTINDEXABLE,
-//            'access' => Access::PUBLIC,
-//            'search' => false,
-//            'description' => 'The Official de facto languages used in the country'
-//        ],
+        'languages.official' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Official languages used in the country'
+        ],
+        'languages.official.deJure' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Official de jure languages used in the country'
+        ],
+        'languages.official.deFacto' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Official de facto languages used in the country'
+        ],
+        'languages.regional' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Regional languages used in the country'
+        ],
+        'languages.widelySpoken' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Widely Spoken languages used in the country'
+        ],
+        'languages.localCommunities' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Local Communities languages used in the country'
+        ],
+        'languages.extraTerritorialCommunities' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The Extra territorial Communities languages used in the country'
+        ],
+        'languages.dialects' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The dialects used in the country'
+        ],
+        'languages.signs' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The language signs used in the country'
+        ],
+        'languages.signs.official' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The language signs with status official used in the country'
+        ],
+        'languages.signs.recognized' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The language signs with status recognized used in the country'
+        ],
+        'languages.signs.used' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The language signs with no law status used in the country'
+        ],
         'localesIcu' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
@@ -363,32 +444,14 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'Ids for wiki data'
         ],
-        'otherAppsIds.openStreetMap' => [
+        'otherAppsIds.openStreetMapRelation' => [
             'source' => Source::DATA,
-            'type' => Type::OBJECT,
+            'type' => Type::INTEGER,
             'nullable' => true,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
             'search' => false,
-            'description' => 'Ids for Open Street Map'
-        ],
-        'otherAppsIds.openStreetMap.type' => [
-            'source' => Source::DATA,
-            'type' => Type::STRING,
-            'nullable' => true,
-            'index' => Index::NOTINDEXABLE,
-            'access' => Access::PUBLIC,
-            'search' => false,
-            'description' => 'Type for Open Street Map'
-        ],
-        'otherAppsIds.openStreetMap.id' => [
-            'source' => Source::DATA,
-            'type' => Type::STRING,
-            'nullable' => true,
-            'index' => Index::NOTINDEXABLE,
-            'access' => Access::PUBLIC,
-            'search' => false,
-            'description' => 'Id for Open Street Map'
+            'description' => 'Ids for Open Street Relation Map'
         ],
         'keywords' => [
             'source' => Source::TRANSLATIONS,
