@@ -4,6 +4,7 @@ namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Currencies;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Languages;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Flags;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\OtherAppsIds;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Country\CcIdn;
@@ -112,7 +113,7 @@ class Country extends BaseDataObj
             'ccTld' => Type::STRING,
             'ccIdn' => CcIdn::class,
             'timeZones' => SerializedArray::class,
-            'languages' => Type::STRING, //'string',
+            'languages' => Languages::class,
             'localesIcu' => SerializedArray::class,
             'demonyms' => SerializedArray::class,
             'otherAppsIds' => OtherAppsIds::class,
