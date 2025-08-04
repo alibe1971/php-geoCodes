@@ -52,12 +52,15 @@ echo
 echo 'SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN ...'
 
 
-stan_output=$($PHP_BIN -d error_reporting=E_ALL & ~E_DEPRECATED vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G)
+$PHP_BIN -d error_reporting='E_ALL & ~E_DEPRECATED' vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G
+stan_status=$?
+
+echo
 printf '\033[1A\r\033[K'
 printf '\033[1A\r\033[K'
 echo "SOURCE CODE STATIC CHECK WITH RUNNING PHPSTAN COMPLETED."
-if echo "$stan_output" | grep -q "ERROR"; then
-  echo "$stan_output"
+
+if [ "$stan_status" -ne 0 ]; then
   echo
   echo "SCRIPT TERMINATED WITH ERROR."
   echo

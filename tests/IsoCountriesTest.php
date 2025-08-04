@@ -1646,4 +1646,20 @@ final class IsoCountriesTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @test
+     * @testdox Countries: ELIBE.
+     * @return void
+     * @throws QueryException
+     * @throws GeneralException
+     */
+    public function testStica(): void
+    {
+        $countries = self::$geoCodes->countries();
+        $country = $countries->where('alpha2', 'GI')->first();
+        print_r($country->toJson());
+        //
+        $this->assertTrue(true);
+    }
 }

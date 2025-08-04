@@ -1,10 +1,11 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Standard;
 
-class CountryDialCodesExceptionsItem extends BaseDataObj
+class MottosStructureItem extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -12,8 +13,7 @@ class CountryDialCodesExceptionsItem extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'code' => 'string',
-            'origin' => 'string'
+            'text' => Standard::class
         ];
     }
 }

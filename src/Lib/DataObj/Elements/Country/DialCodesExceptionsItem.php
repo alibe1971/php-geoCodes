@@ -1,11 +1,10 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use JetBrains\PhpStorm\Language;
 
-class CountryMottosStructureItem extends BaseDataObj
+class DialCodesExceptionsItem extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -13,7 +12,8 @@ class CountryMottosStructureItem extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'text' => Language::class
+            'code' => 'string',
+            'origin' => 'string'
         ];
     }
 }

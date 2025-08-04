@@ -1,10 +1,10 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 
-class CountryCcIdnItem extends BaseDataObj
+class CcIdnItem extends BaseDataObj
 {
     /**
      * @return array<string, mixed>
@@ -15,7 +15,7 @@ class CountryCcIdnItem extends BaseDataObj
             'unicode' => 'string',
             'punycode' => 'string',
             'language' => 'string',
-            'regionsOfUse' => CountryCcIdnItemRegions::class
+            'regionsOfUse' => CcIdnItemRegions::class
         ];
     }
 }

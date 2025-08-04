@@ -3,8 +3,12 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\DataObj\Locales;
-use Alibe\GeoCodes\Lib\DataObj\TimeZones;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Currencies;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Flags;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\OtherAppsIds;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\CcIdn;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\DialCodes;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Country\Mottos;
 
 class Country extends BaseDataObj
 {
@@ -14,7 +18,7 @@ class Country extends BaseDataObj
     protected string $xmlRootElement = "country";
 
     /**
-     * @return array<string, array<string, array<string, array<string, string>|string>>>
+     * @return array<string, array<string, array<string, array<string, array<string, string>|string>|string>>>
      */
     protected function getXmlMap(): array
     {
@@ -98,20 +102,19 @@ class Country extends BaseDataObj
             'unM49' => 'string',
             'name' => 'string',
             'fullName' => 'string',
-            'officialName' => Languages::class,
-            'flags' => CountryFlags::class,
+            'officialName' => Standard::class,
+            'flags' => Flags::class,
             'dependency' => 'string',
-            'mottos' => CountryMottos::class,
-            'currencies' => CountryCurrencies::class,
-            'dialCodes' => CountryDialCodes::class,
+            'mottos' => Mottos::class,
+            'currencies' => Currencies::class,
+            'dialCodes' => DialCodes::class,
             'ccTld' => 'string',
-            'ccIdn' => CountryCcIdn::class,
-            'timeZones' => TimeZones::class,
+            'ccIdn' => CcIdn::class,
+            'timeZones' => SerializedArray::class,
             'languages' => 'string', //'string',
-            'localesIcu' => Locales::class,
-            'demonyms' => Demonysm::class,
-            'otherAppsIds' => CountryOtherAppsIds::class,
-
+            'localesIcu' => SerializedArray::class,
+            'demonyms' => SerializedArray::class,
+            'otherAppsIds' => OtherAppsIds::class,
         ];
     }
 }

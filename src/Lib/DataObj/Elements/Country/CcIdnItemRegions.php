@@ -1,10 +1,10 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 
-class CountryCcIdnItemRegions extends BaseDataObj implements \JsonSerializable
+class CcIdnItemRegions extends BaseDataObj implements \JsonSerializable
 {
     /**
      * @return array<string>

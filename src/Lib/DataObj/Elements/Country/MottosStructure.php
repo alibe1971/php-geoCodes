@@ -1,10 +1,10 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 
-class CountryCcIdn extends BaseDataObj implements \JsonSerializable
+class MottosStructure extends BaseDataObj implements \JsonSerializable
 {
     /**
      * @return array<string>
@@ -15,12 +15,12 @@ class CountryCcIdn extends BaseDataObj implements \JsonSerializable
     }
 
     /**
-     * @return array<array>
+     * @return array<int, array<int, string>>
      */
     protected function getObjectStructureParser(): array
     {
         return [
-            [CountryCcIdnItem::class]
+            [MottosStructureItem::class]
         ];
     }
 }

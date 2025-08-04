@@ -1,10 +1,10 @@
 <?php
 
-namespace Alibe\GeoCodes\Lib\DataObj\Elements;
+namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
 
-class CountryDialCodesExceptions extends BaseDataObj implements \JsonSerializable
+class DialCodesExceptions extends BaseDataObj implements \JsonSerializable
 {
     /**
      * @return array<string>
@@ -15,12 +15,12 @@ class CountryDialCodesExceptions extends BaseDataObj implements \JsonSerializabl
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<int, string>>
      */
     protected function getObjectStructureParser(): array
     {
         return [
-            [CountryDialCodesExceptionsItem::class]
+            [DialCodesExceptionsItem::class]
         ];
     }
 }
