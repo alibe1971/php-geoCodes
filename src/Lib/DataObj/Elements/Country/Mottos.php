@@ -15,10 +15,10 @@ class Mottos extends BaseDataObj
             'official' => MottosStructure::class,
             'popular' => MottosStructure::class,
             'founding' => MottosStructure::class,
-            'military' => MottosStructure::class,
-            'historical' => MottosStructure::class,
-            'royal' => MottosStructure::class,
             'presidential' => MottosStructure::class,
+            'royal' => MottosStructure::class,
+            'military' => MottosStructure::class,
+            'historical' => MottosStructure::class
         ];
     }
 }

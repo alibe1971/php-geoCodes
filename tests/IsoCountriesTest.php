@@ -49,7 +49,8 @@ final class IsoCountriesTest extends TestCase
             'currencies.legalTenders',
             'currencies.widelyAccepted',
             'dialCodes',
-            'dialCodes.main',
+            'dialCodes.deJure',
+            'dialCodes.deFacto',
             'dialCodes.exceptions',
             'timeZones',
             'localesIcu',
@@ -796,16 +797,18 @@ final class IsoCountriesTest extends TestCase
                 // check the type of the key
                 preg_match('/\[(.*?)\]/', $description, $matches);
                 $type = $matches[1];
+                $getType = gettype($object->{$prop});
                 if (strpos($type, '?') === 0) {
                     $type = substr($type, 1);
-                    $assert = gettype($object->{$prop}) == $type || gettype($object->{$prop}) == 'NULL';
+                    $assert = $getType == $type || $getType == 'NULL';
                 } else {
-                    $assert = gettype($object->{$prop}) == $type;
+                    $assert = $getType == $type;
                 }
+
                 $this->assertTrue(
                     $assert,
                     'Key type `' . $key . '` for the country `' . $country->name .
-                        '`does not match with the declared type'
+                        '` (`' . $getType . '`) does not match with the declared type (`' . $type . '`)'
                 );
             }
         }
@@ -1471,8 +1474,8 @@ final class IsoCountriesTest extends TestCase
                 ['ID' => [ 'alpha2' => 'ID' ]]
             ],
             [
-                "'dialCodes.main', '+62'",
-                ['dialCodes.main', '+62'],
+                "'dialCodes.deJure', '+62'",
+                ['dialCodes.deJure', '+62'],
                 'where',
                 ['ID' => [ 'alpha2' => 'ID' ]]
             ],
@@ -1531,8 +1534,8 @@ final class IsoCountriesTest extends TestCase
                 ['IE' => [ 'alpha2' => 'IE' ]]
             ],
             [
-                "'officialName', 'like', '%ינת%'",
-                ['officialName', 'like', '%ינת%'],
+                "'officialName', 'like', '%ינַת%'",
+                ['officialName', 'like', '%ינַת%'],
                 'where',
                 ['IL' => [ 'alpha2' => 'IL' ]]
             ],
@@ -1555,8 +1558,8 @@ final class IsoCountriesTest extends TestCase
                 ['CN' => [ 'alpha2' => 'CN' ], 'HK' => [ 'alpha2' => 'HK' ], 'MO' => [ 'alpha2' => 'MO' ]]
             ],
             [
-                "[['officialName', 'like', '%人民共和%'], ['officialName', 'not like', '%港特別行政%']]",
-                [[['officialName', 'like', '%人民共和%'], ['officialName', 'not like', '%港特別行政%']]],
+                "[['officialName', 'like', '%人民共和%'], ['officialName', 'not like', '%香港%']]",
+                [[['officialName', 'like', '%人民共和%'], ['officialName', 'not like', '%香港%']]],
                 'where',
                 ['CN' => [ 'alpha2' => 'CN' ], 'MO' => [ 'alpha2' => 'MO' ]]
             ],
@@ -1577,8 +1580,7 @@ final class IsoCountriesTest extends TestCase
                 ['dialCodes', '<=', '+1'],
                 'where',
                 [
-                    'CA' => [ 'alpha2' => 'CA' ], 'DO' => [ 'alpha2' => 'DO' ], 'UM' => [ 'alpha2' => 'UM' ],
-                    'US' => [ 'alpha2' => 'US' ]
+                    'CA' => [ 'alpha2' => 'CA' ], 'US' => [ 'alpha2' => 'US' ], 'UM' => [ 'alpha2' => 'UM' ]
                 ]
             ],
             [
@@ -1586,8 +1588,7 @@ final class IsoCountriesTest extends TestCase
                 [[['dialCodes', '>=', '+1'], ['dialCodes', '<', '+12']]],
                  'where',
                 [
-                    'CA' => [ 'alpha2' => 'CA' ], 'DO' => [ 'alpha2' => 'DO' ], 'UM' => [ 'alpha2' => 'UM' ],
-                    'US' => [ 'alpha2' => 'US' ]
+                    'CA' => [ 'alpha2' => 'CA' ], 'US' => [ 'alpha2' => 'US' ], 'UM' => [ 'alpha2' => 'UM' ]
                 ]
             ],
             [
@@ -1595,8 +1596,7 @@ final class IsoCountriesTest extends TestCase
                 ['dialCodes', '<', '+12'],
                 'where',
                 [
-                    'CA' => [ 'alpha2' => 'CA' ], 'DO' => [ 'alpha2' => 'DO' ], 'UM' => [ 'alpha2' => 'UM' ],
-                    'US' => [ 'alpha2' => 'US' ]
+                    'CA' => [ 'alpha2' => 'CA' ], 'US' => [ 'alpha2' => 'US' ], 'UM' => [ 'alpha2' => 'UM' ]
                 ]
             ],
             [
@@ -1656,9 +1656,13 @@ final class IsoCountriesTest extends TestCase
      */
     public function testStica(): void
     {
+//        print_r(self::$geoCodes->countries()->selectableFields());
+
         $countries = self::$geoCodes->countries();
-        $country = $countries->where('alpha2', 'GI')->first();
-        print_r($country->toJson());
+        $country = $countries->select('mottos.military', 'mottos.official')->where('alpha2', 'GI')->first();
+        print_r($country->toXmlAndValidate());
+
+
         //
         $this->assertTrue(true);
     }

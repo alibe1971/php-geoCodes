@@ -20,6 +20,32 @@ class Country extends BaseDataObj
     protected string $xmlRootElement = "country";
 
     /**
+     * @return array<string, string>
+     */
+    private function getLanguagesXmlMap(): array
+    {
+        return [
+            "@tag" => "language"
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getMottosXmlMap(): array
+    {
+        return [
+            "@tag" => "entry",
+            '@children' => [
+                "text" => [
+                    "@tag" => "motto",
+                    "@attribute" => "lang",
+                ]
+            ]
+        ];
+    }
+
+    /**
      * @return array<string, array<string, array<string, array<string, array<string, string>|string>|string>>>
      */
     protected function getXmlMap(): array
@@ -36,22 +62,13 @@ class Country extends BaseDataObj
                     ]
                 ],
                 "mottos" => [
-                    "official" => [
-                        "@attribute" => "lang",
-                        "@tag" => "motto"
-                    ],
-                    "popular" => [
-                        "@attribute" => "lang",
-                        "@tag" => "motto"
-                    ],
-                    "royal" => [
-                        "@attribute" => "lang",
-                        "@tag" => "motto"
-                    ],
-                    "presidential" => [
-                        "@attribute" => "lang",
-                        "@tag" => "motto"
-                    ],
+                    "official" => $this->getMottosXmlMap(),
+                    "popular" => $this->getMottosXmlMap(),
+                    "founding" => $this->getMottosXmlMap(),
+                    "military" => $this->getMottosXmlMap(),
+                    "historical" => $this->getMottosXmlMap(),
+                    "royal" => $this->getMottosXmlMap(),
+                    "presidential" => $this->getMottosXmlMap(),
                 ],
                 "currencies" => [
                     "legalTenders" => [
@@ -88,6 +105,22 @@ class Country extends BaseDataObj
                 ],
                 "localesIcu" => [
                     "@tag" => "locale"
+                ],
+                "languages" => [
+                    "official" => [
+                        "deJure" => $this->getLanguagesXmlMap(),
+                        "deFacto" => $this->getLanguagesXmlMap()
+                    ],
+                    "regional" => $this->getLanguagesXmlMap(),
+                    "widelySpoken" => $this->getLanguagesXmlMap(),
+                    "localCommunities" => $this->getLanguagesXmlMap(),
+                    "extraTerritorialCommunities" => $this->getLanguagesXmlMap(),
+                    "signs" => [
+                        "official" => $this->getLanguagesXmlMap(),
+                        "recognized" => $this->getLanguagesXmlMap(),
+                        "used" => $this->getLanguagesXmlMap(),
+                    ],
+                    "dialects" => $this->getLanguagesXmlMap(),
                 ]
             ]
         ];
