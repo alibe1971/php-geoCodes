@@ -736,13 +736,16 @@ final class IsoCurrenciesTest extends TestCase
                 );
 
                 // check the type of the key
-                preg_match('/\[(.*?)\]/', $description, $matches);
-                $type = $matches[1];
+                if (preg_match('/\[(.*?)\]/', $description, $matches) === 1) {
+                    $type = $matches[1];
+                } else {
+                    $this->fail('Description for key `' . $key . '` must contain a [type]');
+                }
                 if (strpos($type, '?') === 0) {
                     $type = substr($type, 1);
-                    $assert = gettype($object->{$prop}) == $type || gettype($object->{$prop}) == 'NULL';
+                    $assert = gettype($object->{$prop}) === $type || gettype($object->{$prop}) === 'NULL';
                 } else {
-                    $assert = gettype($object->{$prop}) == $type;
+                    $assert = gettype($object->{$prop}) === $type;
                 }
                 $this->assertTrue(
                     $assert,

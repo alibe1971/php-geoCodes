@@ -191,7 +191,7 @@ class BaseDataObj extends StdClass implements IteratorAggregate
     /**
      * @param bool $withValidation
      * @return string
-     * @throws GeneralException
+     * @throws GeneralException|\DOMException
      */
     private function execToXml(bool $withValidation = false): string
     {
@@ -228,7 +228,8 @@ class BaseDataObj extends StdClass implements IteratorAggregate
      * @param DOMElement $element
      * @param DOMDocument $dom
      * @param string $rootElement
-     * @param array<string, mixed> $map
+     * @param array<string,mixed> $map
+     * @throws \DOMException
      */
     private function arrayToXml(
         array $data,
@@ -237,7 +238,9 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         string $rootElement,
         array $map
     ): void {
-        $tagKey = $attributeKey = $typeKey = $subElement = null;
+        $tagKey = $attributeKey = null;
+        $typeKey = null;
+
         if (isset($map[$rootElement]) && is_array($map[$rootElement])) {
             if (array_key_exists('@tag', $map[$rootElement])) {
                 $tagKey = $map[$rootElement]['@tag'];
@@ -257,42 +260,70 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         }
 
         foreach ($data as $key => $value) {
-            $transformedKey = preg_replace('/[^a-zA-Z0-9_]/', '_', $tagKey ?? $key);
-            if (is_string($transformedKey)) {
-                if (is_array($value)) {
-                    $subElement = $dom->createElement($transformedKey);
-                    $element->appendChild($subElement);
-                    $newRootElement = $transformedKey;
-                    $newMap = (isset($map['@children'][$key]) ? $map['@children'] : ($map[$rootElement] ?? []));
+            // normalizza il nome tag
+            $rawKey = (string)($tagKey ?? $key);
+            $transformedKey = preg_replace('/[^a-zA-Z0-9_]/', '_', $rawKey) ?? $rawKey;
 
-                    $this->arrayToXml($value, $subElement, $dom, $newRootElement, $newMap);
-                } else {
-                    if (isset($typeKey) && array_key_exists($transformedKey, $typeKey)) {
-                        switch ($typeKey[$transformedKey]) {
-                            case 'CDATA':
-                                $subElement = $dom->createElement($transformedKey);
-                                $cdata = $dom->createCDATASection($value);
-                                $subElement->appendChild($cdata);
-                                break;
-                        }
-                    } else {
-                        if (is_null($value)) {
-                            $subElement = $dom->createElement($transformedKey);
-                            $subElement->setAttribute('xsi:nil', 'true');
-                            $subElement->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-                        } else {
-                            $subElement = $dom->createElement($transformedKey, $value);
-                        }
-                    }
-                }
-
-                if ($attributeKey && is_string($key)) {
-                    $subElement->setAttribute($attributeKey, $key);
-                }
-                $element->appendChild($subElement);
+            // Se per qualunque motivo non è stringa, salta
+            if (!is_string($transformedKey) || $transformedKey === '') {
+                continue;
             }
+
+            if (is_array($value)) {
+                $subElement = $dom->createElement($transformedKey);
+
+                if ($attributeKey !== null) {
+                    $subElement->setAttribute($attributeKey, (string)$key);
+                }
+
+                $element->appendChild($subElement);
+
+                $newRootElement = $transformedKey;
+                $newMap = isset($map['@children'][$key])
+                    ? $map['@children']
+                    : ($map[$rootElement] ?? []);
+
+                $this->arrayToXml($value, $subElement, $dom, $newRootElement, $newMap);
+                continue;
+            }
+
+            $subElement = null;
+
+            if (isset($typeKey) && array_key_exists($transformedKey, $typeKey)) {
+                switch ($typeKey[$transformedKey]) {
+                    case 'CDATA':
+                        $subElement = $dom->createElement($transformedKey);
+                        $subElement->appendChild($dom->createCDATASection((string)$value));
+                        break;
+
+                    default:
+                        $subElement = $dom->createElement($transformedKey);
+                        $subElement->appendChild($dom->createTextNode((string)$value));
+                        break;
+                }
+            } else {
+                if ($value === null) {
+                    $subElement = $dom->createElement($transformedKey);
+                    $subElement->setAttributeNS(
+                        'http://www.w3.org/2000/xmlns/',
+                        'xmlns:xsi',
+                        'http://www.w3.org/2001/XMLSchema-instance'
+                    );
+                    $subElement->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsi:nil', 'true');
+                } else {
+                    $subElement = $dom->createElement($transformedKey);
+                    $subElement->appendChild($dom->createTextNode((string)$value));
+                }
+            }
+
+            if ($attributeKey !== null) {
+                $subElement->setAttribute($attributeKey, (string)$key);
+            }
+
+            $element->appendChild($subElement);
         }
     }
+
 
     /**
      * @param array<array-key, mixed> $array
