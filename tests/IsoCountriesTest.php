@@ -795,14 +795,18 @@ final class IsoCountriesTest extends TestCase
                 );
 
                 // check the type of the key
-                preg_match('/\[(.*?)\]/', $description, $matches);
-                $type = $matches[1];
+                if (preg_match('/\[(.*?)\]/', $description, $matches) === 1) {
+                    $type = $matches[1];
+                } else {
+                    $this->fail('Description for key `' . $key . '` must contain a [type]');
+                }
+
                 $getType = gettype($object->{$prop});
                 if (strpos($type, '?') === 0) {
                     $type = substr($type, 1);
-                    $assert = $getType == $type || $getType == 'NULL';
+                    $assert = $getType === $type || $getType === 'NULL';
                 } else {
-                    $assert = $getType == $type;
+                    $assert = $getType === $type;
                 }
 
                 $this->assertTrue(
@@ -1645,25 +1649,5 @@ final class IsoCountriesTest extends TestCase
                 ['IT' => [ 'alpha2' => 'IT' ]]
             ],
         ];
-    }
-
-    /**
-     * @test
-     * @testdox Countries: ELIBE.
-     * @return void
-     * @throws QueryException
-     * @throws GeneralException
-     */
-    public function testStica(): void
-    {
-//        print_r(self::$geoCodes->countries()->selectableFields());
-
-        $countries = self::$geoCodes->countries();
-        $country = $countries->select('mottos.military', 'mottos.official')->where('alpha2', 'GI')->first();
-        print_r($country->toXmlAndValidate());
-
-
-        //
-        $this->assertTrue(true);
     }
 }
