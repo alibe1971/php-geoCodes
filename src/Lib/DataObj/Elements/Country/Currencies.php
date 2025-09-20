@@ -3,7 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Country;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\DataObj\Currencies as CurrencyList;
+use Alibe\GeoCodes\Lib\DataObj\Elements\SerializedArray;
 
 class Currencies extends BaseDataObj
 {
@@ -13,8 +13,8 @@ class Currencies extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'legalTenders' => CurrencyList::class,
-            'widelyAccepted' => CurrencyList::class,
+            'legalTenders' => SerializedArray::class,
+            'widelyAccepted' => SerializedArray::class,
         ];
     }
 }

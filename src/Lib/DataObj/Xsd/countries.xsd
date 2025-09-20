@@ -103,34 +103,14 @@
                                         <xs:element name="legalTenders" minOccurs="0">
                                             <xs:complexType>
                                                 <xs:sequence>
-                                                    <xs:element name="currency" minOccurs="0" maxOccurs="unbounded">
-                                                        <xs:complexType>
-                                                            <xs:sequence>
-                                                                <xs:element name="isoAlpha" type="xs:string"/>
-                                                                <xs:element name="isoNumber" type="xs:string"/>
-                                                                <xs:element name="name" type="xs:string"/>
-                                                                <xs:element name="symbol" type="xs:string" nillable="true"/>
-                                                                <xs:element name="decimal" type="xs:int" nillable="true"/>
-                                                            </xs:sequence>
-                                                        </xs:complexType>
-                                                    </xs:element>
+                                                    <xs:element name="currency" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                                                 </xs:sequence>
                                             </xs:complexType>
                                         </xs:element>
                                         <xs:element name="widelyAccepted" minOccurs="0">
                                             <xs:complexType>
                                                 <xs:sequence>
-                                                    <xs:element name="currency" minOccurs="0" maxOccurs="unbounded">
-                                                        <xs:complexType>
-                                                            <xs:sequence>
-                                                                <xs:element name="isoAlpha" type="xs:string"/>
-                                                                <xs:element name="isoNumber" type="xs:string"/>
-                                                                <xs:element name="name" type="xs:string"/>
-                                                                <xs:element name="symbol" type="xs:string" nillable="true"/>
-                                                                <xs:element name="decimal" type="xs:int" nillable="true"/>
-                                                            </xs:sequence>
-                                                        </xs:complexType>
-                                                    </xs:element>
+                                                    <xs:element name="currency" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                                                 </xs:sequence>
                                             </xs:complexType>
                                         </xs:element>

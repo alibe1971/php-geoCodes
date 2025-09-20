@@ -190,19 +190,6 @@ class Enquiries
                 }
             }
 
-            /** Case of Countries: build also the currencies */
-            if ($this->dataSetName == 'countries') {
-                foreach ($object['currencies'] as $typeCur => $currencies) {
-                    if (!empty($currencies)) {
-                        $newCurrenciesArray = [];
-                        foreach ($currencies as $cur) {
-                            $newCurrenciesArray[] = $this->dataSets['currencies'][$cur];
-                        }
-                        $object['currencies'][$typeCur] = $newCurrenciesArray;
-                    }
-                }
-            }
-
             $this->dataSets[$this->dataSetName][$object[$this->dataSetPrimaryKey]] = $object;
             $k++;
         }
