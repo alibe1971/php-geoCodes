@@ -260,11 +260,9 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         }
 
         foreach ($data as $key => $value) {
-            // normalizza il nome tag
             $rawKey = (string)($tagKey ?? $key);
             $transformedKey = preg_replace('/[^a-zA-Z0-9_]/', '_', $rawKey) ?? $rawKey;
 
-            // Se per qualunque motivo non è stringa, salta
             if (!is_string($transformedKey) || $transformedKey === '') {
                 continue;
             }
@@ -338,10 +336,6 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         }
         return true;
     }
-
-
-
-
 
     /**
      * @param string $xmlString
