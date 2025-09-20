@@ -477,25 +477,70 @@ class Enquiries
 
             $object = [];
             foreach ($this->dataSetsStructure as $prop => $structure) {
-                /** get only the requested property */
-                if (!in_array($prop, $this->query['select'])) {
+                if (!in_array($prop, $this->query['select'], true)) {
                     continue;
                 }
-                if (preg_match('/\./', $prop)) {
-                    list($prop0, $prop1) = explode('.', $prop);
-                    if (!array_key_exists($prop0, $object)) {
-                        $object[$prop0] = [];
+                $parts = explode('.', $prop);
+                if (count($parts) === 1) {
+                    if (array_key_exists($parts[0], $data)) {
+                        $object[$parts[0]] = $data[$parts[0]];
                     }
-                    $object[$prop0][$prop1] = $data[$prop0][$prop1];
-                } else {
-                    $object[$prop] = $data[$prop];
+                    continue;
+                }
+                $found = false;
+                $value = $this->arrayGetPath($data, $parts, $found);
+                if ($found) {
+                    $this->arraySetPath($object, $parts, $value);
                 }
             }
+
             /** build the index */
             $this->data[($this->query['index'] ? $data[$this->query['index']] : $keyOut)] = $object;
             $key++;
             $keyOut++;
         }
+    }
+
+    /**
+     * Reads from $array following the path (a,b,c...). $found=false if any segments are missing.
+     *
+     * @param array<string, array<string>|scalar|null> $array
+     * @param list<string> $path
+     * @param bool|null $found
+     * @return array<array<string>|bool|float|int|string|null>|bool|float|int|string|null
+     */
+    private function arrayGetPath(array $array, array $path, bool &$found = null)
+    {
+        $found = true;
+        $cur = $array;
+        foreach ($path as $seg) {
+            if (!is_array($cur) || !array_key_exists($seg, $cur)) {
+                $found = false;
+                return null;
+            }
+            $cur = $cur[$seg];
+        }
+        return $cur;
+    }
+
+    /**
+     * Writes $value to $array following the path (a,b,c...), creating the intermediate arrays.
+     *
+     * @param array<string, array<string>|scalar|null> $array
+     * @param list<string> $path
+     * @param array<array<string>|bool|float|int|string|null>|bool|float|int|string|null $value
+     * @return void
+     */
+    private function arraySetPath(array &$array, array $path, $value): void
+    {
+        $ref =& $array;
+        foreach ($path as $seg) {
+            if (!isset($ref[$seg]) || !is_array($ref[$seg])) {
+                $ref[$seg] = [];
+            }
+            $ref =& $ref[$seg];
+        }
+        $ref = $value;
     }
 
     /**
