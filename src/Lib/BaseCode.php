@@ -6,6 +6,7 @@ use Alibe\GeoCodes\Lib\DataObj\InstanceLanguage;
 use Alibe\GeoCodes\Lib\DataObj\ConfigSettings;
 use Alibe\GeoCodes\Lib\Enums\Exceptions\ConfigCodes;
 use Alibe\GeoCodes\Lib\Exceptions\ConfigException;
+use Alibe\GeoCodes\Lib\Exceptions\QueryException;
 
 class BaseCode
 {
@@ -135,6 +136,7 @@ class BaseCode
 
     /**
      * @return CodesCountries
+     * @throws QueryException
      */
     public function countries(): CodesCountries
     {
@@ -143,6 +145,7 @@ class BaseCode
 
     /**
      * @return CodesGeoSets
+     * @throws QueryException
      */
     public function geoSets(): CodesGeoSets
     {
@@ -151,9 +154,19 @@ class BaseCode
 
     /**
      * @return CodesCurrencies
+     * @throws QueryException
      */
     public function currencies(): CodesCurrencies
     {
         return new CodesCurrencies($this->getInstanceLanguage(), $this->getCurrentLocale());
+    }
+
+    /**
+     * @return CodesLanguages
+     * @throws QueryException
+     */
+    public function languages(): CodesLanguages
+    {
+        return new CodesLanguages($this->getInstanceLanguage(), $this->getCurrentLocale());
     }
 }

@@ -662,6 +662,15 @@ class Enquiries
                         'currencies' => $prop
                     ];
                     break;
+                case 'languages':
+                    if ($prop != 'string' || $lenght != 3) {
+                        break;
+                    }
+                    $Enquiry = [
+                        'languages' => 'isoCode'
+                    ];
+                    $item = strtolower($item);
+                    break;
                 default:
                     break;
             }
