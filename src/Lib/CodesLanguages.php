@@ -36,6 +36,15 @@ class CodesLanguages extends Enquiries
             'search' => true,
             'description' => 'The ISO-639 three letters code identifier'
         ],
+        'name' => [
+            'source' => Source::TRANSLATIONS,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'index' => Index::INDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => true,
+            'description' => 'The common name of the language'
+        ],
         'part2b' => [
             'source' => Source::DATA,
             'type' => Type::STRING,

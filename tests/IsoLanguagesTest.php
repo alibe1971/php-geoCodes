@@ -28,9 +28,11 @@ final class IsoLanguagesTest extends TestCase
     private static array $constants = [
         'indexes' => [
             'isoCode',
+            'name',
         ],
         'selectables' => [
             'isoCode',
+            'name',
             'part2b',
             'part2t',
             'part1',
@@ -59,8 +61,8 @@ final class IsoLanguagesTest extends TestCase
             'DESC' => 'zzj',
         ],
         'name' => [
-            'ASC' => 'ADB Unit of Account',
-            'DESC' => 'Zloty',
+            'ASC' => '\'Are\'are',
+            'DESC' => 'ǃXóõ',
         ]
     ];
 
@@ -1396,78 +1398,170 @@ final class IsoLanguagesTest extends TestCase
                 'where',
                 ['ita' => [ 'isoCode' => 'ita' ]]
             ],
-//            [
-//                "'name', 'like', 'Netherlands%'",
-//                ['name', 'like', 'Netherlands%'],
-//                'where',
-//                ['ANG' => [ 'isoCode' => 'ANG' ]]
-//            ],
-//            [
-//                "'name', 'like', '%Netherlands%'",
-//                ['name', 'like', '%Netherlands%'],
-//                'where',
-//                ['ANG' => [ 'isoCode' => 'ANG' ]]
-//            ],
-//            [
-//                "'name', 'like', '%Guilder'",
-//                ['name', 'like', '%Guilder'],
-//                'where',
-//                ['ANG' => [ 'isoCode' => 'ANG' ], 'AWG' => [ 'isoCode' => 'AWG' ]]
-//            ],
-//            [
-//                "'name', 'like', '%Guilder%'",
-//                ['name', 'like', '%Guilder%'],
-//                'where',
-//                ['ANG' => [ 'isoCode' => 'ANG' ], 'AWG' => [ 'isoCode' => 'AWG' ]]
-//            ],
-//            [
-//                "'name', 'like', '%ntillea%'",
-//                ['name', 'like', '%ntillea%'],
-//                'where',
-//                ['ANG' => [ 'isoCode' => 'ANG' ]]
-//            ],
-//            [
-//                "[['name', 'like', '%Euro'], ['name', 'not like', '%WIR%']]",
-//                [[['name', 'like', '%Euro'], ['name', 'not like', '%WIR%']]],
-//                'where',
-//                ['ita' => [ 'isoCode' => 'ita' ]]
-//            ],
-//            [
-//                "[['decimal', '<=', 2], ['isoNumber', '978']]",
-//                [[['decimal', '<=', 2], ['isoNumber', '978']]],
-//                'where',
-//                ['EUR' => [ 'isoCode' => 'EUR' ]]
-//            ],
-//            [
-//                "[['decimal', '>=', '2'], ['decimal', '<', '3'], ['isoNumber', '978']]",
-//                [[['decimal', '>=', '2'], ['decimal', '<', '3'], ['isoNumber', '978']]],
-//                'where',
-//                ['EUR' => [ 'isoCode' => 'EUR' ]]
-//            ],
-//            [
-//                "[['decimal', '<', 3], ['isoNumber', '978']]",
-//                [[['decimal', '<', 3], ['isoNumber', '978']]],
-//                'where',
-//                ['EUR' => [ 'isoCode' => 'EUR' ]]
-//            ],
-//            [
-//                "[['decimal', '>', '1'], ['decimal', '<', '3'], ['isoNumber', '978']]",
-//                [[['decimal', '>', '1'], ['decimal', '<', '3'], ['isoNumber', '978']]],
-//                'where',
-//                ['EUR' => [ 'isoCode' => 'EUR' ]]
-//            ],
-//            [
-//                "[['symbol', 'is NOT null'], ['isoNumber', 978]]",
-//                [[['symbol', 'is NOT null'], ['isoNumber', 978]]],
-//                'where',
-//                ['EUR' => [ 'isoCode' => 'EUR' ]]
-//            ],
-//            [
-//                "[['symbol', 'is null'], ['isoNumber', 646]]",
-//                [[['symbol', 'is null'], ['isoNumber', 646]]],
-//                'where',
-//                ['RWF' => [ 'isoCode' => 'RWF' ]]
-//            ],
+            [
+                "'name', 'like', 'Nama%'",
+                ['name', 'like', 'Nama%'],
+                'where',
+                [ 'nmx' => [ 'isoCode' => 'nmx' ], 'nkm' => [ 'isoCode' => 'nkm' ], 'nmk' => [ 'isoCode' => 'nmk' ] ]
+            ],
+            [
+                "'name', 'like', '%Papua New Guinea%'",
+                ['name', 'like', '%Papua New Guinea%'],
+                'where',
+                [
+                    'nmx' => [ 'isoCode' => 'nmx' ], 'amm' => [ 'isoCode' => 'amm' ], 'awb' => [ 'isoCode' => 'awb' ],
+                    'ayq' => [ 'isoCode' => 'ayq' ], 'bey' => [ 'isoCode' => 'bey' ], 'bjl' => [ 'isoCode' => 'bjl' ],
+                    'bmn' => [ 'isoCode' => 'bmn' ], 'bpw' => [ 'isoCode' => 'bpw' ], 'don' => [ 'isoCode' => 'don' ],
+                    'kcl' => [ 'isoCode' => 'kcl' ], 'kmf' => [ 'isoCode' => 'kmf' ], 'kol' => [ 'isoCode' => 'kol' ],
+                    'kue' => [ 'isoCode' => 'kue' ], 'kxr' => [ 'isoCode' => 'kxr' ], 'leu' => [ 'isoCode' => 'leu' ],
+                    'lle' => [ 'isoCode' => 'lle' ], 'mdc' => [ 'isoCode' => 'mdc' ], 'mds' => [ 'isoCode' => 'mds' ],
+                    'mjn' => [ 'isoCode' => 'mjn' ], 'mtf' => [ 'isoCode' => 'mtf' ], 'mti' => [ 'isoCode' => 'mti' ],
+                    'pby' => [ 'isoCode' => 'pby' ], 'ped' => [ 'isoCode' => 'ped' ], 'pgz' => [ 'isoCode' => 'pgz' ],
+                    'sbc' => [ 'isoCode' => 'sbc' ], 'sim' => [ 'isoCode' => 'sim' ], 'spe' => [ 'isoCode' => 'spe' ],
+                    'uro' => [ 'isoCode' => 'uro' ], 'wmo' => [ 'isoCode' => 'wmo' ]
+                ]
+            ],
+            [
+                "'name', 'like', '%Nama'",
+                ['name', 'like', '%Nama'],
+                'where',
+                [ 'bdd' => [ 'isoCode' => 'bdd' ], 'ito' => [ 'isoCode' => 'ito' ], 'kun' => [ 'isoCode' => 'kun' ] ]
+            ],
+            [
+                "'name', 'like', '%Nama%'",
+                ['name', 'like', '%Nama%'],
+                'where',
+                [
+                    'bdd' => [ 'isoCode' => 'bdd' ], 'ito' => [ 'isoCode' => 'ito' ], 'kun' => [ 'isoCode' => 'kun' ],
+                    'bjp' => [ 'isoCode' => 'bjp' ], 'egm' => [ 'isoCode' => 'egm' ], 'knm' => [ 'isoCode' => 'knm' ],
+                    'lsp' => [ 'isoCode' => 'lsp' ], 'naq' => [ 'isoCode' => 'naq' ], 'nkm' => [ 'isoCode' => 'nkm' ],
+                    'nmk' => [ 'isoCode' => 'nmk' ], 'nmx' => [ 'isoCode' => 'nmx' ], 'pmr' => [ 'isoCode' => 'pmr' ],
+                    'tlt' => [ 'isoCode' => 'tlt' ], 'xrt' => [ 'isoCode' => 'xrt' ]
+                ]
+            ],
+            [
+                "'name', 'like', '%ara%'",
+                ['name', 'like', '%ara%'],
+                'where',
+                [
+                    'aaf' => [ 'isoCode' => 'aaf' ], 'aah' => [ 'isoCode' => 'aah' ], 'aao' => [ 'isoCode' => 'aao' ],
+                    'aaz' => [ 'isoCode' => 'aaz' ], 'abh' => [ 'isoCode' => 'abh' ], 'abv' => [ 'isoCode' => 'abv' ],
+                    'acm' => [ 'isoCode' => 'acm' ], 'acq' => [ 'isoCode' => 'acq' ], 'acw' => [ 'isoCode' => 'acw' ],
+                    'acx' => [ 'isoCode' => 'acx' ], 'acy' => [ 'isoCode' => 'acy' ], 'adf' => [ 'isoCode' => 'adf' ],
+                    'adr' => [ 'isoCode' => 'adr' ], 'aeb' => [ 'isoCode' => 'aeb' ], 'aec' => [ 'isoCode' => 'aec' ],
+                    'afb' => [ 'isoCode' => 'afb' ], 'agd' => [ 'isoCode' => 'agd' ], 'aie' => [ 'isoCode' => 'aie' ],
+                    'aii' => [ 'isoCode' => 'aii' ], 'aju' => [ 'isoCode' => 'aju' ], 'akr' => [ 'isoCode' => 'akr' ],
+                    'amr' => [ 'isoCode' => 'amr' ], 'amw' => [ 'isoCode' => 'amw' ], 'anq' => [ 'isoCode' => 'anq' ],
+                    'aon' => [ 'isoCode' => 'aon' ], 'apc' => [ 'isoCode' => 'apc' ], 'apd' => [ 'isoCode' => 'apd' ],
+                    'ara' => [ 'isoCode' => 'ara' ], 'arb' => [ 'isoCode' => 'arb' ], 'arc' => [ 'isoCode' => 'arc' ],
+                    'ard' => [ 'isoCode' => 'ard' ], 'arg' => [ 'isoCode' => 'arg' ], 'ari' => [ 'isoCode' => 'ari' ],
+                    'arj' => [ 'isoCode' => 'arj' ], 'arl' => [ 'isoCode' => 'arl' ], 'aro' => [ 'isoCode' => 'aro' ],
+                    'arp' => [ 'isoCode' => 'arp' ], 'arq' => [ 'isoCode' => 'arq' ], 'ars' => [ 'isoCode' => 'ars' ],
+                    'aru' => [ 'isoCode' => 'aru' ], 'arw' => [ 'isoCode' => 'arw' ], 'ary' => [ 'isoCode' => 'ary' ],
+                    'arz' => [ 'isoCode' => 'arz' ], 'atq' => [ 'isoCode' => 'atq' ], 'auz' => [ 'isoCode' => 'auz' ],
+                    'avl' => [ 'isoCode' => 'avl' ], 'awm' => [ 'isoCode' => 'awm' ], 'awt' => [ 'isoCode' => 'awt' ],
+                    'awx' => [ 'isoCode' => 'awx' ], 'axl' => [ 'isoCode' => 'axl' ], 'ayc' => [ 'isoCode' => 'ayc' ],
+                    'ayh' => [ 'isoCode' => 'ayh' ], 'ayl' => [ 'isoCode' => 'ayl' ], 'aym' => [ 'isoCode' => 'aym' ],
+                    'ayn' => [ 'isoCode' => 'ayn' ], 'ayp' => [ 'isoCode' => 'ayp' ], 'ayr' => [ 'isoCode' => 'ayr' ],
+                    'baj' => [ 'isoCode' => 'baj' ], 'bam' => [ 'isoCode' => 'bam' ], 'bbb' => [ 'isoCode' => 'bbb' ],
+                    'bbg' => [ 'isoCode' => 'bbg' ], 'bhn' => [ 'isoCode' => 'bhn' ], 'bhr' => [ 'isoCode' => 'bhr' ],
+                    'bjf' => [ 'isoCode' => 'bjf' ], 'bmm' => [ 'isoCode' => 'bmm' ], 'bmz' => [ 'isoCode' => 'bmz' ],
+                    'bps' => [ 'isoCode' => 'bps' ], 'brd' => [ 'isoCode' => 'brd' ], 'brm' => [ 'isoCode' => 'brm' ],
+                    'brp' => [ 'isoCode' => 'brp' ], 'brs' => [ 'isoCode' => 'brs' ], 'bsn' => [ 'isoCode' => 'bsn' ],
+                    'byc' => [ 'isoCode' => 'byc' ], 'bym' => [ 'isoCode' => 'bym' ], 'bzc' => [ 'isoCode' => 'bzc' ],
+                    'bzk' => [ 'isoCode' => 'bzk' ], 'cah' => [ 'isoCode' => 'cah' ], 'cbc' => [ 'isoCode' => 'cbc' ],
+                    'cby' => [ 'isoCode' => 'cby' ], 'cfd' => [ 'isoCode' => 'cfd' ], 'cld' => [ 'isoCode' => 'cld' ],
+                    'cra' => [ 'isoCode' => 'cra' ], 'crf' => [ 'isoCode' => 'crf' ], 'dgi' => [ 'isoCode' => 'dgi' ],
+                    'dry' => [ 'isoCode' => 'dry' ], 'gas' => [ 'isoCode' => 'gas' ], 'gbd' => [ 'isoCode' => 'gbd' ],
+                    'ggk' => [ 'isoCode' => 'ggk' ], 'gho' => [ 'isoCode' => 'gho' ], 'gjm' => [ 'isoCode' => 'gjm' ],
+                    'gnw' => [ 'isoCode' => 'gnw' ], 'gra' => [ 'isoCode' => 'gra' ], 'grn' => [ 'isoCode' => 'grn' ],
+                    'gug' => [ 'isoCode' => 'gug' ], 'gui' => [ 'isoCode' => 'gui' ], 'guj' => [ 'isoCode' => 'guj' ],
+                    'gun' => [ 'isoCode' => 'gun' ], 'gva' => [ 'isoCode' => 'gva' ], 'gvo' => [ 'isoCode' => 'gvo' ],
+                    'gwn' => [ 'isoCode' => 'gwn' ], 'gyr' => [ 'isoCode' => 'gyr' ], 'har' => [ 'isoCode' => 'har' ],
+                    'haz' => [ 'isoCode' => 'haz' ], 'hkk' => [ 'isoCode' => 'hkk' ], 'ikr' => [ 'isoCode' => 'ikr' ],
+                    'jaf' => [ 'isoCode' => 'jaf' ], 'jbj' => [ 'isoCode' => 'jbj' ], 'jmr' => [ 'isoCode' => 'jmr' ],
+                    'jpa' => [ 'isoCode' => 'jpa' ], 'jra' => [ 'isoCode' => 'jra' ], 'jrb' => [ 'isoCode' => 'jrb' ],
+                    'jye' => [ 'isoCode' => 'jye' ], 'kaa' => [ 'isoCode' => 'kaa' ], 'kad' => [ 'isoCode' => 'kad' ],
+                    'kah' => [ 'isoCode' => 'kah' ], 'kdd' => [ 'isoCode' => 'kdd' ], 'kdj' => [ 'isoCode' => 'kdj' ],
+                    'kdr' => [ 'isoCode' => 'kdr' ], 'kev' => [ 'isoCode' => 'kev' ], 'kfw' => [ 'isoCode' => 'kfw' ],
+                    'kgv' => [ 'isoCode' => 'kgv' ], 'khz' => [ 'isoCode' => 'khz' ], 'kim' => [ 'isoCode' => 'kim' ],
+                    'kld' => [ 'isoCode' => 'kld' ], 'kpg' => [ 'isoCode' => 'kpg' ], 'kpj' => [ 'isoCode' => 'kpj' ],
+                    'kpt' => [ 'isoCode' => 'kpt' ], 'kqr' => [ 'isoCode' => 'kqr' ], 'krc' => [ 'isoCode' => 'krc' ],
+                    'krj' => [ 'isoCode' => 'krj' ], 'kth' => [ 'isoCode' => 'kth' ], 'ktx' => [ 'isoCode' => 'ktx' ],
+                    'kwf' => [ 'isoCode' => 'kwf' ], 'kwg' => [ 'isoCode' => 'kwg' ], 'kwv' => [ 'isoCode' => 'kwv' ],
+                    'kxp' => [ 'isoCode' => 'kxp' ], 'kyj' => [ 'isoCode' => 'kyj' ], 'kys' => [ 'isoCode' => 'kys' ],
+                    'kza' => [ 'isoCode' => 'kza' ], 'kzr' => [ 'isoCode' => 'kzr' ], 'leu' => [ 'isoCode' => 'leu' ],
+                    'lgg' => [ 'isoCode' => 'lgg' ], 'lgk' => [ 'isoCode' => 'lgk' ], 'lkb' => [ 'isoCode' => 'lkb' ],
+                    'lra' => [ 'isoCode' => 'lra' ], 'lrg' => [ 'isoCode' => 'lrg' ], 'lri' => [ 'isoCode' => 'lri' ],
+                    'lrm' => [ 'isoCode' => 'lrm' ], 'lrt' => [ 'isoCode' => 'lrt' ], 'mar' => [ 'isoCode' => 'mar' ],
+                    'mbs' => [ 'isoCode' => 'mbs' ], 'mcd' => [ 'isoCode' => 'mcd' ], 'mgb' => [ 'isoCode' => 'mgb' ],
+                    'mhu' => [ 'isoCode' => 'mhu' ], 'mjp' => [ 'isoCode' => 'mjp' ], 'mpk' => [ 'isoCode' => 'mpk' ],
+                    'mqy' => [ 'isoCode' => 'mqy' ], 'mrh' => [ 'isoCode' => 'mrh' ], 'mrs' => [ 'isoCode' => 'mrs' ],
+                    'mrw' => [ 'isoCode' => 'mrw' ], 'msc' => [ 'isoCode' => 'msc' ], 'mvl' => [ 'isoCode' => 'mvl' ],
+                    'mvr' => [ 'isoCode' => 'mvr' ], 'mxi' => [ 'isoCode' => 'mxi' ], 'myk' => [ 'isoCode' => 'myk' ],
+                    'nac' => [ 'isoCode' => 'nac' ], 'nck' => [ 'isoCode' => 'nck' ], 'ncs' => [ 'isoCode' => 'ncs' ],
+                    'nhd' => [ 'isoCode' => 'nhd' ], 'nma' => [ 'isoCode' => 'nma' ], 'nrb' => [ 'isoCode' => 'nrb' ],
+                    'nrg' => [ 'isoCode' => 'nrg' ], 'nzk' => [ 'isoCode' => 'nzk' ], 'oar' => [ 'isoCode' => 'oar' ],
+                    'omr' => [ 'isoCode' => 'omr' ], 'paf' => [ 'isoCode' => 'paf' ], 'pak' => [ 'isoCode' => 'pak' ],
+                    'pax' => [ 'isoCode' => 'pax' ], 'paz' => [ 'isoCode' => 'paz' ], 'pbg' => [ 'isoCode' => 'pbg' ],
+                    'pbp' => [ 'isoCode' => 'pbp' ], 'pcp' => [ 'isoCode' => 'pcp' ], 'pga' => [ 'isoCode' => 'pga' ],
+                    'pjt' => [ 'isoCode' => 'pjt' ], 'ppl' => [ 'isoCode' => 'ppl' ], 'prc' => [ 'isoCode' => 'prc' ],
+                    'prf' => [ 'isoCode' => 'prf' ], 'prk' => [ 'isoCode' => 'prk' ], 'prw' => [ 'isoCode' => 'prw' ],
+                    'pys' => [ 'isoCode' => 'pys' ], 'pzn' => [ 'isoCode' => 'pzn' ], 'qvp' => [ 'isoCode' => 'qvp' ],
+                    'rbp' => [ 'isoCode' => 'rbp' ], 'reg' => [ 'isoCode' => 'reg' ], 'rkw' => [ 'isoCode' => 'rkw' ],
+                    'sam' => [ 'isoCode' => 'sam' ], 'sar' => [ 'isoCode' => 'sar' ], 'sbz' => [ 'isoCode' => 'sbz' ],
+                    'sdl' => [ 'isoCode' => 'sdl' ], 'sef' => [ 'isoCode' => 'sef' ], 'seq' => [ 'isoCode' => 'seq' ],
+                    'sev' => [ 'isoCode' => 'sev' ], 'shu' => [ 'isoCode' => 'shu' ], 'shz' => [ 'isoCode' => 'shz' ],
+                    'skr' => [ 'isoCode' => 'skr' ], 'slm' => [ 'isoCode' => 'slm' ], 'sqr' => [ 'isoCode' => 'sqr' ],
+                    'sre' => [ 'isoCode' => 'sre' ], 'srm' => [ 'isoCode' => 'srm' ], 'ssh' => [ 'isoCode' => 'ssh' ],
+                    'stk' => [ 'isoCode' => 'stk' ], 'tab' => [ 'isoCode' => 'tab' ], 'tac' => [ 'isoCode' => 'tac' ],
+                    'tar' => [ 'isoCode' => 'tar' ], 'tbf' => [ 'isoCode' => 'tbf' ], 'tbh' => [ 'isoCode' => 'tbh' ],
+                    'tcu' => [ 'isoCode' => 'tcu' ], 'thh' => [ 'isoCode' => 'thh' ], 'thk' => [ 'isoCode' => 'thk' ],
+                    'tmr' => [ 'isoCode' => 'tmr' ], 'tor' => [ 'isoCode' => 'tor' ], 'tre' => [ 'isoCode' => 'tre' ],
+                    'tro' => [ 'isoCode' => 'tro' ], 'twl' => [ 'isoCode' => 'twl' ], 'twr' => [ 'isoCode' => 'twr' ],
+                    'txn' => [ 'isoCode' => 'txn' ], 'vmb' => [ 'isoCode' => 'vmb' ], 'vmh' => [ 'isoCode' => 'vmh' ],
+                    'war' => [ 'isoCode' => 'war' ], 'wax' => [ 'isoCode' => 'wax' ], 'wba' => [ 'isoCode' => 'wba' ],
+                    'wbf' => [ 'isoCode' => 'wbf' ], 'wkb' => [ 'isoCode' => 'wkb' ], 'wnd' => [ 'isoCode' => 'wnd' ],
+                    'wnn' => [ 'isoCode' => 'wnn' ], 'woa' => [ 'isoCode' => 'woa' ], 'wrb' => [ 'isoCode' => 'wrb' ],
+                    'wrz' => [ 'isoCode' => 'wrz' ], 'xaa' => [ 'isoCode' => 'xaa' ], 'xaj' => [ 'isoCode' => 'xaj' ],
+                    'xar' => [ 'isoCode' => 'xar' ], 'xha' => [ 'isoCode' => 'xha' ], 'xmv' => [ 'isoCode' => 'xmv' ],
+                    'xna' => [ 'isoCode' => 'xna' ], 'xpt' => [ 'isoCode' => 'xpt' ], 'xqa' => [ 'isoCode' => 'xqa' ],
+                    'xrb' => [ 'isoCode' => 'xrb' ], 'xrt' => [ 'isoCode' => 'xrt' ], 'xrw' => [ 'isoCode' => 'xrw' ],
+                    'xun' => [ 'isoCode' => 'xun' ], 'xwk' => [ 'isoCode' => 'xwk' ], 'xyb' => [ 'isoCode' => 'xyb' ],
+                    'yar' => [ 'isoCode' => 'yar' ], 'yhd' => [ 'isoCode' => 'yhd' ], 'yrw' => [ 'isoCode' => 'yrw' ],
+                    'yud' => [ 'isoCode' => 'yud' ], 'yww' => [ 'isoCode' => 'yww' ], 'yxg' => [ 'isoCode' => 'yxg' ],
+                    'zaj' => [ 'isoCode' => 'zaj' ], 'zkk' => [ 'isoCode' => 'zkk' ], 'zmr' => [ 'isoCode' => 'zmr' ],
+                    'zra' => [ 'isoCode' => 'zra' ], 'zsa' => [ 'isoCode' => 'zsa' ]
+                ]
+            ],
+            [
+                "[['name', 'like', '%ara'], ['name', 'not like', '%arab%']]",
+                [[['name', 'like', '%ara'], ['name', 'not like', '%arab%']]],
+                'where',
+                [
+                    'adr' => [ 'isoCode' => 'adr' ], 'aie' => [ 'isoCode' => 'aie' ], 'ari' => [ 'isoCode' => 'ari' ],
+                    'awx' => [ 'isoCode' => 'awx' ], 'ayc' => [ 'isoCode' => 'ayc' ], 'aym' => [ 'isoCode' => 'aym' ],
+                    'ayr' => [ 'isoCode' => 'ayr' ], 'bam' => [ 'isoCode' => 'bam' ], 'byc' => [ 'isoCode' => 'byc' ],
+                    'bym' => [ 'isoCode' => 'bym' ], 'cfd' => [ 'isoCode' => 'cfd' ], 'cra' => [ 'isoCode' => 'cra' ],
+                    'dgi' => [ 'isoCode' => 'dgi' ], 'gho' => [ 'isoCode' => 'gho' ], 'gjm' => [ 'isoCode' => 'gjm' ],
+                    'gwn' => [ 'isoCode' => 'gwn' ], 'jaf' => [ 'isoCode' => 'jaf' ], 'jmr' => [ 'isoCode' => 'jmr' ],
+                    'kad' => [ 'isoCode' => 'kad' ], 'kdd' => [ 'isoCode' => 'kdd' ], 'khz' => [ 'isoCode' => 'khz' ],
+                    'lgg' => [ 'isoCode' => 'lgg' ], 'nck' => [ 'isoCode' => 'nck' ], 'nrb' => [ 'isoCode' => 'nrb' ],
+                    'nzk' => [ 'isoCode' => 'nzk' ], 'pbp' => [ 'isoCode' => 'pbp' ], 'pcp' => [ 'isoCode' => 'pcp' ],
+                    'pjt' => [ 'isoCode' => 'pjt' ], 'sre' => [ 'isoCode' => 'sre' ], 'tac' => [ 'isoCode' => 'tac' ],
+                    'tar' => [ 'isoCode' => 'tar' ], 'tbf' => [ 'isoCode' => 'tbf' ], 'tcu' => [ 'isoCode' => 'tcu' ],
+                    'thh' => [ 'isoCode' => 'thh' ], 'twl' => [ 'isoCode' => 'twl' ], 'twr' => [ 'isoCode' => 'twr' ],
+                    'wbf' => [ 'isoCode' => 'wbf' ], 'wnn' => [ 'isoCode' => 'wnn' ], 'wrb' => [ 'isoCode' => 'wrb' ],
+                    'xpt' => [ 'isoCode' => 'xpt' ], 'xwk' => [ 'isoCode' => 'xwk' ], 'xyb' => [ 'isoCode' => 'xyb' ],
+                    'yxg' => [ 'isoCode' => 'yxg' ]
+                ]
+            ],
+            [
+                "[['macroLanguageRef', 'is NOT null'], ['glottoCode', 'like', '%rbe123%']]",
+                [[['macroLanguageRef', 'is NOT null'], ['glottoCode', 'like', '%rbe123%']]],
+                'where',
+                ['aae' => [ 'isoCode' => 'aae' ]]
+            ]
         ];
     }
 }

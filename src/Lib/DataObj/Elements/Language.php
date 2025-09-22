@@ -33,6 +33,7 @@ class Language extends BaseDataObj
     {
         return [
             'isoCode' => Type::STRING,
+            'name' => Type::STRING,
             'part2b' => Type::STRING,
             'part2t' => Type::STRING,
             'part1' => Type::STRING,
