@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-        bootstrap="vendor/autoload.php"
+        bootstrap="tests/bootstrap.php"
         colors="true"
         convertDeprecationsToExceptions="false"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
+        timeoutForSmallTests="0"
+        timeoutForMediumTests="0"
+        timeoutForLargeTests="0"
 >
     <php>
         <env name="PHP_VERSION" value="7.4"/>
         <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED &amp; ~E_USER_DEPRECATED"/>
+        <ini name="max_execution_time" value="0"/>
+        <ini name="memory_limit" value="-1"/>
     </php>
 
     <testsuites>
@@ -20,6 +25,7 @@
             <file>tests/IsoCountriesTest.php</file>
             <file>tests/IsoCurrenciesTest.php</file>
             <file>tests/IsoGeoSetsTest.php</file>
+            <file>tests/IsoLanguagesTest.php</file>
         </testsuite>
     </testsuites>
 
