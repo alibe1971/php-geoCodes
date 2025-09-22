@@ -173,11 +173,17 @@ class Enquiries
             foreach ($this->dataSetsStructure as $prop => $structure) {
                 /** get the value from the source */
                 if ($structure['source'] === Source::DATA) {
-                    if (preg_match('/\./', $prop)) {
-                        list($prop0, $prop1) = explode('.', $prop);
-                        $object[$prop0][$prop1] = $data[$prop0][$prop1];
+                    $parts = explode('.', $prop);
+                    if (count($parts) === 1) {
+                        if (array_key_exists($parts[0], $data)) {
+                            $object[$parts[0]] = $data[$parts[0]];
+                        }
                     } else {
-                        $object[$prop] = $data[$prop];
+                        $found = false;
+                        $value = $this->arrayGetPath($data, $parts, $found);
+                        if ($found) {
+                            $this->arraySetPath($object, $parts, $value);
+                        }
                     }
                 }
                 if ($structure['source'] === Source::TRANSLATIONS) {
