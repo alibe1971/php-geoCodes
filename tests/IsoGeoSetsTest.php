@@ -99,6 +99,7 @@ final class IsoGeoSetsTest extends TestCase
      * @test
      * @testdox Test `->get()` the list of geosets is object as instance of GeoSets.
      * @return void
+     * @throws QueryException
      */
     public function testToGetListOfGeoSets(): void
     {
@@ -211,7 +212,7 @@ final class IsoGeoSetsTest extends TestCase
      * @testdox Test the `->getXsd()` and the `->getXsdSingle()` features.
      * @depends testToGetListOfGeoSets
      * @return void
-     * @throws GeneralException
+     * @throws GeneralException|QueryException
      */
     public function testGetXsdFeatures(): void
     {
@@ -641,10 +642,12 @@ final class IsoGeoSetsTest extends TestCase
         $desc = $geoSets->orderBy($index, 'desc')->first();
         $this->assertEquals(self::$expectedOrderByTest[$index]['DESC'], $desc->{$index});
     }
+
     /**
      * @test
      * @testdox  ==>  using an invalid properties
      * @return void
+     * @throws QueryException
      */
     public function testOrderByWithException(): void
     {
@@ -674,6 +677,7 @@ final class IsoGeoSetsTest extends TestCase
      * @test
      * @testdox Test the indexes
      * @return void
+     * @throws QueryException
      */
     public function testIndexes(): void
     {
@@ -729,6 +733,7 @@ final class IsoGeoSetsTest extends TestCase
      * @test
      * @testdox Tests on the selectable fields.
      * @return void
+     * @throws QueryException
      */
     public function testSelectableFields(): void
     {
@@ -911,6 +916,7 @@ final class IsoGeoSetsTest extends TestCase
      * @test
      * @testdox ==> with Exception (using array or arrays in input).
      * @return void
+     * @throws QueryException
      */
     public function testFetchFeatureWithException(): void
     {
@@ -1161,6 +1167,7 @@ final class IsoGeoSetsTest extends TestCase
      * @param array<array<int, int|string>> $args
      * @param int $errorCode
      * @param array<string> $matches
+     * @throws QueryException
      */
     public function testConditionsWithDataProviderInvalid(
         string $txt,

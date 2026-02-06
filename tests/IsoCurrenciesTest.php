@@ -104,6 +104,7 @@ final class IsoCurrenciesTest extends TestCase
      * @test
      * @testdox Test `->get()` the list of currencies is object as instance of Currencies.
      * @return void
+     * @throws QueryException
      */
     public function testToGetListOfCurrencies(): void
     {
@@ -215,7 +216,7 @@ final class IsoCurrenciesTest extends TestCase
      * @testdox Test the `->getXsd()` and the `->getXsdSingle()` features.
      * @depends testToGetListOfCurrencies
      * @return void
-     * @throws GeneralException
+     * @throws GeneralException|QueryException
      */
     public function testGetXsdFeatures(): void
     {
@@ -626,10 +627,12 @@ final class IsoCurrenciesTest extends TestCase
         $desc = $currencies->orderBy($index, 'desc')->first();
         $this->assertEquals(self::$expectedOrderByTest[$index]['DESC'], $desc->{$index});
     }
+
     /**
      * @test
      * @testdox  ==>  using an invalid properties
      * @return void
+     * @throws QueryException
      */
     public function testOrderByWithException(): void
     {
@@ -659,6 +662,7 @@ final class IsoCurrenciesTest extends TestCase
      * @test
      * @testdox Test the indexes
      * @return void
+     * @throws QueryException
      */
     public function testIndexes(): void
     {
@@ -714,6 +718,7 @@ final class IsoCurrenciesTest extends TestCase
      * @test
      * @testdox Tests on the selectable fields.
      * @return void
+     * @throws QueryException
      */
     public function testSelectableFields(): void
     {
@@ -895,6 +900,7 @@ final class IsoCurrenciesTest extends TestCase
      * @test
      * @testdox ==> with Exception (using array or arrays in input).
      * @return void
+     * @throws QueryException
      */
     public function testFetchFeatureWithException(): void
     {
@@ -1149,6 +1155,7 @@ final class IsoCurrenciesTest extends TestCase
      * @param array<array<int, int|string>> $args
      * @param int $errorCode
      * @param array<string> $matches
+     * @throws QueryException
      */
     public function testConditionsWithDataProviderInvalid(
         string $txt,
