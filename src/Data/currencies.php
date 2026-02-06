@@ -98,12 +98,6 @@ return [
         'decimal' => 2
     ],
     [
-        'isoAlpha' => 'BGN',
-        'isoNumber' => '975',
-        'symbol' => 'лв',
-        'decimal' => 2
-    ],
-    [
         'isoAlpha' => 'BHD',
         'isoNumber' => '048',
         'symbol' => null,
@@ -334,7 +328,7 @@ return [
     [
         'isoAlpha' => 'GEL',
         'isoNumber' => '981',
-        'symbol' => null,
+        'symbol' => '₾',
         'decimal' => 2
     ],
     [
@@ -460,7 +454,7 @@ return [
     [
         'isoAlpha' => 'KGS',
         'isoNumber' => '417',
-        'symbol' => 'лв',
+        'symbol' => null,
         'decimal' => 2
     ],
     [
@@ -502,13 +496,13 @@ return [
     [
         'isoAlpha' => 'KZT',
         'isoNumber' => '398',
-        'symbol' => 'лв',
+        'symbol' => '₸',
         'decimal' => 2
     ],
     [
         'isoAlpha' => 'LAK',
         'isoNumber' => '418',
-        'symbol' => 'LAK',
+        'symbol' => '₭',
         'decimal' => 2
     ],
     [
@@ -940,7 +934,7 @@ return [
     [
         'isoAlpha' => 'UZS',
         'isoNumber' => '860',
-        'symbol' => 'лв',
+        'symbol' => null,
         'decimal' => 2
     ],
     [
