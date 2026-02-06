@@ -20,7 +20,7 @@ final class IsoCurrenciesTest extends TestCase
     /**
      * @var int
      */
-    private static int $currenciesTotalCount = 180;
+    private static int $currenciesTotalCount = 179;
 
     /**
      * @var array<int|array<string>> $constants
@@ -44,8 +44,8 @@ final class IsoCurrenciesTest extends TestCase
      * @var array<int, string> $expectedLimitTest
      */
     private static array $expectedLimitTest = [
-        'BTN',
-        'BWP'
+        'BWP',
+        'BYN'
     ];
 
     /**
