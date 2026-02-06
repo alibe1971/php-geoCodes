@@ -238,7 +238,6 @@ final class IsoLanguagesTest extends TestCase
     public function testGetToXmlFeatureWithExternalValidation(): void
     {
         $languages = self::$geoCodes->languages();
-        $i = 0;
         foreach (
             [
             // Whole list
@@ -257,8 +256,7 @@ final class IsoLanguagesTest extends TestCase
             $this->assertInstanceOf(SimpleXMLElement::class, $decodedXml, 'Not a valid XML');
             $dom = new DOMDocument();
             $dom->loadXML($xml);
-            $this->assertTrue($dom->schemaValidateSource(self::$xsdList), 'Not a valid XML Schema'); // alibe
-            $i++;
+            $this->assertTrue($dom->schemaValidateSource(self::$xsdList), 'Not a valid XML Schema');
         }
     }
 
@@ -327,7 +325,7 @@ final class IsoLanguagesTest extends TestCase
         ) {
             $this->assertEquals(self::$languagesSetsList->$key->isoCode, $flatten[$key . '.isoCode']);
             $this->assertEquals(self::$languagesSetsList->$key->glottoCode, $flatten[$key . '.glottoCode']);
-//            $this->assertEquals(self::$languagesSetsList->$key->name, $flatten[$key . '.name']); // alibe
+            $this->assertEquals(self::$languagesSetsList->$key->name, $flatten[$key . '.name']);
         };
     }
 
@@ -352,7 +350,7 @@ final class IsoLanguagesTest extends TestCase
         ) {
             $this->assertEquals(self::$languagesSetsList->$key->isoCode, $flatten[$key . '_isoCode']);
             $this->assertEquals(self::$languagesSetsList->$key->glottoCode, $flatten[$key . '_glottoCode']);
-//            $this->assertEquals(self::$languagesSetsList->$key->name, $flatten[$key . '_name']); // alibe
+            $this->assertEquals(self::$languagesSetsList->$key->name, $flatten[$key . '_name']);
         };
     }
 
@@ -465,7 +463,7 @@ final class IsoLanguagesTest extends TestCase
             $this->assertInstanceOf(SimpleXMLElement::class, $decodedXml, 'Not a valid XML');
             $dom = new DOMDocument();
             $dom->loadXML($xml);
-            $this->assertTrue($dom->schemaValidateSource(self::$xsdSingle), 'Not a valid XML Schema'); // alibe
+            $this->assertTrue($dom->schemaValidateSource(self::$xsdSingle), 'Not a valid XML Schema');
         }
     }
 
