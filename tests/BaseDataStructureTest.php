@@ -3,8 +3,8 @@
 namespace Alibe\GeoCodes\Tests;
 
 use Alibe\GeoCodes\Lib\DataSets;
+use DateTimeZone;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Finder\Finder;
 
 /**
  * @testdox Config Data Structure
@@ -25,468 +25,781 @@ final class BaseDataStructureTest extends TestCase
     /**
      * @var array<string, mixed>
      */
-    private static array $Config = [];
+    private static array $currentStructure = [
+        'dataSetName' => null,
+        'itemPosition' => null,
+        'mainKey' => null,
+        'mainKeyValue' => null,
+        'propertyName' => null,
+        'jsonItem' => null
+    ];
 
+    private const RECURRING_STRUCTURE = [
+        'countries' => [
+            'mottos' => [
+                'type' => 'array',
+                'canBeEmpty' => true,
+                'isDynamic' => [
+                    'typeOfArray' => 'list', // or `associative`
+                    'dynamicBuild' => [
+                        'type' => 'array',
+                        'canBeEmpty' => false,
+                        'isDynamic' => [
+                            'typeOfArray' => 'associative', // or `list`
+                            'dynamicBuild' => [
+                                'fixedKeys' => [
+                                    'text' => [
+                                        'type' => 'array',
+                                        'isDynamic' => [
+                                            'typeOfArray' => 'associative', // or `list`
+                                            'dynamicBuild' => [
+                                                'type' => 'string',
+                                                'keysChecks' => [
+                                                    'type' => 'string',
+                                                    'validateBCP47' => true
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'languages' => [
+                'type' => 'array',
+                'canBeEmpty' => true,
+                'isDynamic' => [
+                    'typeOfArray' => 'list', // or `associative`
+                    'dynamicBuild' => [
+                        'type' => 'string',
+                        'regex' => '/^[a-z]{3}$/',
+                        'checkDuplicate' => 'countries.languagesDynBuilt',
+                        'checkExistInDataSet' => 'languages.indexes.main'
+                    ]
+                ]
+            ]
+        ]
+    ];
 
     /**
      * @var array<string, mixed>
      */
-    private static array $geocodeDataCtrl = [
+    private static array $geocodeDataStructure = [
+        'config' => [],
         'countries' => [
-            'alpha2' => [],
-            'alpha3' => [],
-            'unM49' => [],
-            'officialName' => [],
-            'languages' => [],
+            'indexes' => [
+                'main' => [
+                    'key' => 'alpha2',
+                    'values' => []
+                ],
+                'secondary' => [
+                    'key' => 'unM49',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'alpha2' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^[A-Z]{2}$/',
+                    'checkDuplicate' => 'countries.alpha2'
+                ],
+                'alpha3' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^[A-Z]{3}$/',
+                    'checkDuplicate' => 'countries.alpha3'
+                ],
+                'unM49' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^\d{3}$/',
+                    'checkDuplicate' => 'countries.alpha3'
+                ],
+                'officialName' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'validateBCP47' => true
+                            ]
+                        ]
+                    ]
+                ],
+                'flags' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'flags.emoji' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^\p{Regional_Indicator}{2}$/u',
+                ],
+                'flags.svg' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'isValidSVG' => true,
+                ],
+                'dependency' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[A-Z]{2}$/',
+                    'checkExistInDataSet' => 'countries.indexes.main'
+                ],
+                'mottos' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'mottos.official' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'mottos.popular' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'mottos.presidential' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'mottos.royal' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'mottos.military' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'mottos.historical' => self::RECURRING_STRUCTURE['countries']['mottos'],
+                'currencies' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'currencies.legalTenders' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^[A-Z]{3}$/',
+                            'checkExistInDataSet' => 'currencies.indexes.main'
+                        ]
+                    ]
+                ],
+                'currencies.widelyAccepted' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^[A-Z]{3}$/',
+                            'checkExistInDataSet' => 'currencies.indexes.main'
+                        ]
+                    ]
+                ],
+                'dialCodes' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'dialCodes.deJure' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^\+\d+$/',
+                        ]
+                    ]
+                ],
+                'dialCodes.deFacto' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^\+\d+$/',
+                        ]
+                    ]
+                ],
+                'dialCodes.exceptions' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'array',
+                            'canBeEmpty' => false,
+                            'isDynamic' => [
+                                'typeOfArray' => 'associative', // or `list`
+                                'dynamicBuild' => [
+                                    'fixedKeys' => [
+                                        'code' => [
+                                            'type' => 'string',
+                                            'regex' => '/^\d+$/',
+                                        ],
+                                        'origin' => [
+                                            'type' => 'string',
+                                            'regex' => '/^[A-Z]{2}$/',
+                                            'checkExistInDataSet' => 'countries.indexes.main'
+                                        ]
+                                    ],
+
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'ccTld' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^\.[a-z]{2}$/',
+                ],
+                'ccIdn' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'array',
+                            'canBeEmpty' => false,
+                            'isDynamic' => [
+                                'typeOfArray' => 'associative', // or `list`
+                                'dynamicBuild' => [
+                                    'fixedKeys' => [
+                                        'unicode' => [
+                                            'type' => 'string',
+                                            'regex' => '/^\.\S+$/u',
+                                            'validateUnicodeIdn' => true,
+                                        ],
+                                        'punycode' => [
+                                            'type' => 'string',
+                                            'regex' => '/^\.(xn--)[a-z0-9]+(?:-[a-z0-9]+)*$/i',
+                                        ],
+                                        'language' => [
+                                            'type' => 'string',
+                                            'validateBCP47' => true
+                                        ],
+                                        'regionsOfUse' => [
+                                            'type' => 'array',
+                                            'isDynamic' => [
+                                                'typeOfArray' => 'list', // or `associative`
+                                                'dynamicBuild' => [
+                                                    'type' => 'string',
+                                                    'regex' => '/^[A-Z]{2}$/',
+                                                    'checkExistInDataSet' => 'countries.indexes.main'
+                                                ]
+                                            ]
+                                        ]
+                                    ],
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'timeZones' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^[A-Za-z][A-Za-z0-9._+-]*(?:\/[A-Za-z0-9][A-Za-z0-9._+-]*)+$/',
+//                            'checkTimeZone' => true // alibe da verificare
+                        ]
+                    ]
+                ],
+                'languages' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'languages.official' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'languages.official.deJure' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.official.deFacto' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.regional' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.widelySpoken' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.localCommunities' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.extraTerritorialCommunities' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.signs' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false
+                ],
+                'languages.signs.official' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.signs.recognized' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.signs.used' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.dialects' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'localesIcu' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'validateBCP47' => true
+                        ]
+                    ]
+                ],
+                'otherAppsIds' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false
+                ],
+                'otherAppsIds.geoNamesOrg' => [
+                    'type' => 'integer',
+                    'nullable' => false,
+                    'min' => 1,
+                    'checkDuplicate' => 'countries.otherAppsIds.geoNamesOrg'
+                ],
+                'otherAppsIds.wikiData' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^Q\d+$/',
+                    'checkDuplicate' => 'countries.otherAppsIds.wikiData'
+                ],
+                'otherAppsIds.openStreetMapRelation' => [
+                    'type' => 'integer',
+                    'nullable' => false,
+                    'min' => 1,
+                    'checkDuplicate' => 'countries.otherAppsIds.openStreetMapRelation'
+                ]
+            ]
         ],
         'currencies' => [
-            'isoAlpha' => [],
-            'isoNumber' => []
+            'indexes' => [
+                'main' => [
+                    'key' => 'isoAlpha',
+                    'values' => []
+                ],
+                'secondary' => [
+                    'key' => 'isoNumber',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'isoAlpha' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^[A-Z]{3}$/',
+                    'checkDuplicate' => 'currencies.isoAlpha'
+                ],
+                'isoNumber' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^\d{3}$/',
+                    'checkDuplicate' => 'currencies.isoNumber'
+                ],
+                'symbol' => [
+                    'type' => 'string',
+                    'nullable' => true
+                ],
+                'decimal' => [
+                    'type' => 'integer',
+                    'nullable' => true
+                ],
+            ]
         ],
         'geoSets' => [
-            'internalCode' => [],
-            'unM49' => []
+            'indexes' => [
+                'main' => [
+                    'key' => 'internalCode',
+                    'values' => []
+                ],
+                'secondary' => [
+                    'key' => 'unM49',
+                    'values' => []
+                ],
+                'checkCountries' => [
+                    'doNotSetOnInit' => true,
+                    'key' => 'countryCodes',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'internalCode' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^[A-Z]{4}(?:-[A-Z0-9]{2,8})+$/',
+                    'checkDuplicate' => 'geoSets.internalCode'
+                ],
+                'unM49' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'exceptionNullable' => [
+                        'key' => 'internalCode',
+                        'regex' => '/^GEOG-/',
+                    ],
+                    'mustBeNull' => [
+                        'key' => 'internalCode',
+                        'regex' => '/^(?!GEOG-)/',
+                    ],
+                    'mustBeNotNull' => [
+                        'key' => 'internalCode',
+                        'regex' => '/^GEOG-/',
+                    ],
+                    'regex' => '/^[0-9]{3}$/',
+                    'checkDuplicate' => 'geoSets.unM49',
+                    'checkNotExistInDataSet' => 'countries.indexes.secondary',
+                    'conditionCheckNotExistInDataSet' => [
+                        'key' => 'internalCode',
+                        'regex' => '/^(?!GEOG-AQ)$/',
+                    ],
+                    'checkExistInDataSet' => 'countries.indexes.secondary',
+                    'conditionCheckExistInDataSet' => [
+                        'key' => 'internalCode',
+                        'regex' => '/^GEOG-AQ$/',
+                    ],
+                ],
+                'tags' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^[a-z]{3,}$/',
+                        ]
+                    ]
+                ],
+                'countryCodes' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'checkGeographicalZones' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'checkExistInDataSet' => 'countries.indexes.main'
+                        ]
+                    ]
+                ]
+            ]
         ],
         'languages' => [
-            'isoCode' => [],
-            'part2b' => [],
-            'part2t' => [],
-            'part1' => [],
-        ],
-        'translations' => []
+            'indexes' => [
+                'main' => [
+                    'key' => 'isoCode',
+                    'values' => []
+                ],
+                'secondary' => [
+                    'key' => 'part1',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'isoCode' => [
+                    'type' => 'string',
+                    'nullable' => false,
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkDuplicate' => 'languages.isoCode'
+                ],
+                'part2b' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkDuplicate' => 'languages.part2b'
+                ],
+                'part2t' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkDuplicate' => 'languages.part2t'
+                ],
+                'part1' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{2}$/',
+                    'checkDuplicate' => 'languages.part1'
+                ],
+                'glottoCode' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{4}\d{4}$/',
+                    'checkDuplicate' => null
+                ],
+                'scope' => [
+                    'type' => 'string',
+                    'checkCategory' => [ 'I', 'M', 'S' ]
+                ],
+                'type' => [
+                    'type' => 'string',
+                    'checkCategory' => [ 'A', 'C', 'E', 'H', 'L', 'S' ]
+                ],
+                'macroLanguageRef' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkExistInDataSet' => 'languages.indexes.main'
+                ],
+                'scripts' => [
+                    'type' => 'array',
+                    'nullable' => false,
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'regex' => '/^[A-Z][a-z]{3}$/',
+//                            'checkExistInDataSet' => 'script.indexes.main.values'
+                        ]
+                    ]
+                ]
+            ]
+        ]
     ];
 
+    /**
+     * @var array<string, mixed>
+     */
     private static array $geocodeTranslationsProperties = [
         'countries' => [
-            'name' => [],
-            'fullName' => [],
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'regex' => '/^[A-Z]{2}$/',
+                    'checkDuplicate' => null,
+                    'checkExistInDataSet' => 'countries.indexes.main'
+                ],
+                'name' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ],
+                'fullName' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ],
+                'demonyms' => [
+                    'type' => 'array'
+                ],
+                'keywords' => [
+                    'type' => 'array'
+                ]
+            ]
         ],
-        'geosets' => [
-            'name' => []
+        'geoSets' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'regex' => '/^[A-Z]{4}(?:-[A-Z0-9]{2,8})+$/',
+                    'checkDuplicate' => null,
+                    'checkExistInDataSet' => 'geoSets.indexes.main'
+                ],
+                'name' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ]
+            ]
         ],
         'currencies' => [
-            'name' => []
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'regex' => '/^[A-Z]{3}$/',
+                    'checkDuplicate' => null,
+                    'checkExistInDataSet' => 'currencies.indexes.main'
+                ],
+                'name' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ]
+            ]
         ],
         'languages' => [
-            'name' => []
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkDuplicate' => null,
+                    'checkExistInDataSet' => 'languages.indexes.main'
+                ],
+                'name' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ]
+            ]
         ]
     ];
 
-    private static array $geocodeCategories = [
-        'languages' => [
-            'scope' => [ 'I', 'M', 'S' ],
-            'type' => [ 'A', 'C', 'E', 'H', 'L', 'S' ]
-        ]
-    ];
+    /**
+     * @var array<string, mixed>
+     */
+    private static array $geocodeDataSet = [];
 
+    /**
+     * @var array<string, mixed>
+     */
+    private static array $duplicatesControl = [];
+
+    /**
+     * Setup
+     * @return void
+     */
     public static function setUpBeforeClass(): void
     {
         self::$dataDir = dirname(__DIR__) . '/src/Data';
     }
 
-
     /**
      * @test
      * @return void
      */
-    public function testDataStructureExists(): void
+    public function testDataSourceIntegrity(): void
     {
-        $finder = new Finder();
-        $finder->files()->in(self::$dataDir)->ignoreDotFiles(true);
-        $dataFiles = [];
-        foreach ($finder as $file) {
-            $dataFiles[] = 1;
+        $this->assertDirectoryExists(self::$dataDir, 'The data directory `' . self::$dataDir . '` does not exist');
+        $this->assertDirectoryIsReadable(self::$dataDir, 'The data directory `' . self::$dataDir . '` is not readable');
+
+        foreach (self::$geocodeDataStructure as $dataSetName => $structure) {
+            $dataSetPath = self::$dataDir . '/' . $dataSetName . '.php';
+            $this->parseDataSet($dataSetName, $dataSetPath, $structure);
         }
-        $this->assertNotEmpty($dataFiles);
     }
 
     /**
      * @test
-     * @depends testDataStructureExists
+     * @depends testDataSourceIntegrity
      * @return void
      */
     public function testValidationConfigFile(): void
     {
-
-        $config = self::$dataDir . '/config.php';
-
-        $this->assertFileExists($config, 'The config file is missing');
-        $config = include($config);
-
-        $this->assertNotEmpty($config);
-
         $this->assertArrayHasKey(
             'settings',
-            $config,
+            self::$geocodeDataSet['config'],
             'The section `settings` is not present in the config file'
         );
-        $this->assertNotEmpty($config['settings'], 'The section `settings` is empty');
+        $this->assertIsArray(
+            self::$geocodeDataSet['config']['settings'],
+            'The section `settings` must be an array'
+        );
+        $this->assertNotEmpty(
+            self::$geocodeDataSet['config']['settings'],
+            'The section `settings` cannot be empty'
+        );
 
         $this->assertArrayHasKey(
             'languages',
-            $config['settings'],
-            'The section `languages` is not present inside the `settings`'
+            self::$geocodeDataSet['config']['settings'],
+            'The section `settings.languages` is not present inside the `settings`'
         );
-        $this->assertNotEmpty($config['settings']['languages'], 'The section `languages` is empty');
+        $this->assertIsArray(
+            self::$geocodeDataSet['config']['settings']['languages'],
+            'The section `settings.languages` must be an array'
+        );
+        $this->assertNotEmpty(
+            self::$geocodeDataSet['config']['settings']['languages'],
+            'The section `settings.languages` cannot be empty'
+        );
 
         $this->assertArrayHasKey(
             'default',
-            $config['settings']['languages'],
-            'The property `default` is not present inside the `languages`'
+            self::$geocodeDataSet['config']['settings']['languages'],
+            'The property `settings.languages.default` is not present inside the `languages`'
+        );
+        $this->assertIsString(
+            self::$geocodeDataSet['config']['settings']['languages']['default'],
+            'The property `settings.languages.default` must be a string'
         );
         $this->assertNotEmpty(
-            $config['settings']['languages']['default'],
-            'The property `default` is empty'
+            self::$geocodeDataSet['config']['settings']['languages']['default'],
+            'The property `settings.languages.default` cannot be empty'
         );
-        self::$defaultLanguage = $config['settings']['languages']['default'];
-
+        self::$defaultLanguage = self::$geocodeDataSet['config']['settings']['languages']['default'];
 
         $this->assertArrayHasKey(
             'inPackage',
-            $config['settings']['languages'],
-            'The property `inPackage` is not present inside the `languages`'
+            self::$geocodeDataSet['config']['settings']['languages'],
+            'The property `settings.languages.inPackage` is not present inside the `languages`'
         );
         $this->assertIsArray(
-            $config['settings']['languages']['inPackage'],
-            'The property `inPackage` is not an array'
+            self::$geocodeDataSet['config']['settings']['languages']['inPackage'],
+            'The property `settings.languages.inPackage` must be an array'
         );
         $this->assertNotEmpty(
-            $config['settings']['languages']['inPackage'],
-            'The property `inPackage` is empty'
+            self::$geocodeDataSet['config']['settings']['languages']['inPackage'],
+            'The property `settings.languages.inPackage` cannot be empty'
         );
         $this->assertContains(
             self::$defaultLanguage,
-            $config['settings']['languages']['inPackage'],
+            self::$geocodeDataSet['config']['settings']['languages']['inPackage'],
             'The default language `'
             . self::$defaultLanguage .
-            '` is not present inside the configuration set of the `languages` packages'
+            '` is not present inside the configuration set of the `settings.languages.inPackage` section'
         );
-        self::$Config = $config;
-    }
-
-    public function testValidationLanguagesData(): void
-    {
-        $languages = self::$dataDir . '/languages.php';
-
-        $this->assertFileExists($languages, 'The `languages` file is missing');
-        $languages = require_once $languages;
-
-        $this->assertNotEmpty($languages);
-
-        $isoCode2Values = array_column($languages, 'isoCode');
-
-        foreach ($languages as $idx => $lng) {
-            /** isoCode */
-            $this->assertArrayHasKey(
-                'isoCode',
-                $lng,
-                'The property `isoCode` is not present inside the `languages` data ' .
-                'for the index `' . $idx . '`'
-            );
-            $this->assertNotContains(
-                $lng['isoCode'],
-                self::$geocodeDataCtrl['languages']['isoCode'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` is a duplicated key in the `languages` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^[a-z]{3}$/',
-                $lng['isoCode'],
-                'The language code `isoCode` `'
-                . $lng['isoCode'] .
-                '` must be three characters (lowercase) long.'
-            );
-            self::$geocodeDataCtrl['languages']['isoCode'][] = $lng['isoCode'];
-
-            /** part2b */
-            $this->assertArrayHasKey(
-                'part2b',
-                $lng,
-                'The property `part2b` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $this->assertNotContains(
-                $lng['part2b'],
-                self::$geocodeDataCtrl['languages']['part2b'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` has a duplicated key `part2b` for value `' . $lng['part2b'] . '` in the `languages` data'
-            );
-            $is_string = is_string($lng['part2b']);
-            $this->assertTrue(
-                $is_string || is_null($lng['part2b']),
-                'The language property `part2b` ' .
-                ' for the isoCode `' . $lng['isoCode'] . '` must be "string" or "null" ' .
-                '(`' . gettype($lng['part2b']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertMatchesRegularExpression(
-                    '/^[a-z]{3}$/',
-                    $lng['part2b'],
-                    'The language code `part2b` `'
-                    . $lng['part2b'] .
-                    '` must be three characters (lowercase) long.'
-                );
-                self::$geocodeDataCtrl['languages']['part2b'][] = $lng['part2b'];
-            }
-
-            /** part2t */
-            $this->assertArrayHasKey(
-                'part2t',
-                $lng,
-                'The property `part2t` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $this->assertNotContains(
-                $lng['part2t'],
-                self::$geocodeDataCtrl['languages']['part2t'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` has a duplicated key `part2t` for value `' . $lng['part2t'] . '` in the `languages` data'
-            );
-            $is_string = is_string($lng['part2t']);
-            $this->assertTrue(
-                $is_string || is_null($lng['part2t']),
-                'The language property `part2t` ' .
-                ' for the isoCode `' . $lng['isoCode'] . '` must be "string" or "null" ' .
-                '(`' . gettype($lng['part2t']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertMatchesRegularExpression(
-                    '/^[a-z]{3}$/',
-                    $lng['part2t'],
-                    'The language code `part2t` `'
-                    . $lng['part2t'] .
-                    '` must be three characters (lowercase) long.'
-                );
-                self::$geocodeDataCtrl['languages']['part2t'][] = $lng['part2t'];
-            }
-
-            /** part1 */
-            $this->assertArrayHasKey(
-                'part1',
-                $lng,
-                'The property `part1` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $this->assertNotContains(
-                $lng['part1'],
-                self::$geocodeDataCtrl['languages']['part1'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` has a duplicated key `part1` for value `' . $lng['part1'] . '` in the `languages` data'
-            );
-            $is_string = is_string($lng['part1']);
-            $this->assertTrue(
-                $is_string || is_null($lng['part1']),
-                'The language property `part1` ' .
-                ' for the isoCode `' . $lng['isoCode'] . '` must be "string" or "null" ' .
-                '(`' . gettype($lng['part1']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertMatchesRegularExpression(
-                    '/^[a-z]{2}$/',
-                    $lng['part1'],
-                    'The language code `part1` `'
-                    . $lng['part1'] .
-                    '` must be two characters (lowercase) long.'
-                );
-                self::$geocodeDataCtrl['languages']['part1'][] = $lng['part1'];
-            }
-
-            /** glottoCode */
-            $this->assertArrayHasKey(
-                'glottoCode',
-                $lng,
-                'The property `glottoCode` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $is_string = is_string($lng['glottoCode']);
-            $this->assertTrue(
-                $is_string || is_null($lng['glottoCode']),
-                'The language property `glottoCode` ' .
-                ' for the isoCode `' . $lng['isoCode'] . '` must be "string" or "null" ' .
-                '(`' . gettype($lng['glottoCode']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertMatchesRegularExpression(
-                    '/^[a-z]{4}\d{4}$/',
-                    $lng['glottoCode'],
-                    'The language code `glottoCode` `'
-                    . $lng['glottoCode'] .
-                    '` must have 4 characters (lowercase) length and 4 numbers length.'
-                );
-            }
-
-            /** scope */
-            $this->assertArrayHasKey(
-                'scope',
-                $lng,
-                'The property `scope` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $this->assertContains(
-                $lng['scope'],
-                self::$geocodeCategories['languages']['scope'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` must have as property `scope` with one of these values: [`' .
-                implode('`, `', self::$geocodeCategories['languages']['scope']) .
-                '`]. `' .
-                $lng['scope'] .
-                '` returned in the `languages` data'
-            );
-
-            /** type */
-            $this->assertArrayHasKey(
-                'type',
-                $lng,
-                'The property `type` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $this->assertContains(
-                $lng['type'],
-                self::$geocodeCategories['languages']['type'],
-                'The language with `isoCode` `'
-                . $lng['isoCode'] .
-                '` must have as property `type` with one of these values: [`' .
-                implode('`, `', self::$geocodeCategories['languages']['type']) .
-                '`]. `' .
-                $lng['type'] .
-                '` returned in the `languages` data'
-            );
-
-            /** macroLanguageRef */
-            $this->assertArrayHasKey(
-                'macroLanguageRef',
-                $lng,
-                'The property `macroLanguageRef` is not present inside the `languages` data ' .
-                'for the isoCode `' . $lng['isoCode'] . '`'
-            );
-            $is_string = is_string($lng['macroLanguageRef']);
-            $this->assertTrue(
-                $is_string || is_null($lng['macroLanguageRef']),
-                'The language property `macroLanguageRef` ' .
-                ' for the isoCode `' . $lng['isoCode'] . '` must be "string" or "null" ' .
-                '(`' . gettype($lng['macroLanguageRef']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertNotEmpty(
-                    trim(preg_replace('/\s+/u', '', $lng['macroLanguageRef'])),
-                    'The language property `macroLanguageRef` cannot be an empty string ' .
-                    'for the isoCode `' . $lng['isoCode'] . '` in `languages` data.'
-                );
-                $this->assertContains(
-                    $lng['macroLanguageRef'],
-                    $isoCode2Values,
-                    'macroLanguageRef `' . $lng['macroLanguageRef'] . '` does not match any existing `isoCode` ' .
-                    ' in `languages` data.'
-                );
-            }
-
-            /** scripts [TODO]*/
-        }
     }
 
     /**
      * @test
-     * @depends testValidationConfigFile
+     * @depends testDataSourceIntegrity
+     * @return void
+     */
+    public function testValidationLanguagesData(): void
+    {
+        $this->commonDataTests('languages');
+    }
+
+    /**
+     * @test
+     * @depends testDataSourceIntegrity
      * @return void
      */
     public function testValidationCurrencyData(): void
     {
-        $currencies = self::$dataDir . '/currencies.php';
+        $this->commonDataTests('currencies');
+    }
 
-        $this->assertFileExists($currencies, 'The `currencies` file is missing');
-        $currencies = require_once $currencies;
+    /**
+     * @test
+     * @depends testDataSourceIntegrity
+     * @return void
+     */
+    public function testValidationGeoSetsData(): void
+    {
+        $this->commonDataTests('geoSets');
+        /** Additional check for matches in the `countries` dataset */
+        $diff = array_diff(
+            self::$geocodeDataStructure['countries']['indexes']['main']['values'],
+            self::$geocodeDataStructure['geoSets']['indexes']['checkCountries']['values'],
+        );
+        $this->assertTrue(
+            empty($diff),
+            'The following country codes in the `countries` dataset '
+            . 'have no correspondence in the `geoSets` geographic zone dataset: ' . "\n"
+            . '[' . implode(', ', $diff) . ']'
+        );
+    }
 
-        $this->assertNotEmpty($currencies);
 
-        foreach ($currencies as $idx => $cur) {
-            /** isoAlpha */
-            $this->assertArrayHasKey(
-                'isoAlpha',
-                $cur,
-                'The property `isoAlpha` is not present inside the `currencies` data ' .
-                'for the index `' . $idx . '`'
-            );
-            $this->assertNotContains(
-                $cur['isoAlpha'],
-                self::$geocodeDataCtrl['currencies']['isoAlpha'],
-                'The currency with `isoAlpha` `'
-                . $cur['isoAlpha'] .
-                '` is a duplicated key in the `currencies` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^[A-Z]{3}$/',
-                $cur['isoAlpha'],
-                'The currency code `isoAlpha` `'
-                . $cur['isoAlpha'] .
-                '` must be three characters long.'
-            );
-            self::$geocodeDataCtrl['currencies']['isoAlpha'][] = $cur['isoAlpha'];
-
-            /** isoNumber */
-            $this->assertArrayHasKey(
-                'isoNumber',
-                $cur,
-                'The property `isoNumber` is not present inside the `currencies` data ' .
-                'for the isoAlpha `' . $cur['isoAlpha'] . '`'
-            );
-            $this->assertNotContains(
-                $cur['isoNumber'],
-                self::$geocodeDataCtrl['currencies']['isoNumber'],
-                'The currency with `isoNumber` `'
-                . $cur['isoAlpha'] .
-                '` is a duplicated key in the `currencies` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^\d\d\d$/',
-                $cur['isoNumber'],
-                'The currency `isoNumber` `'
-                . $cur['isoNumber'] .
-                '` must be three digits long.'
-            );
-            self::$geocodeDataCtrl['currencies']['isoNumber'][] = $cur['isoNumber'];
-
-            /** symbol */
-            $this->assertArrayHasKey(
-                'symbol',
-                $cur,
-                'The property `symbol` is not present inside the `currencies` data ' .
-                'for the isoAlpha `' . $cur['isoAlpha'] . '`'
-            );
-            $is_string = is_string($cur['symbol']);
-            $this->assertTrue(
-                $is_string || is_null($cur['symbol']),
-                'The currency property `symbol` ' .
-                ' for the isoAlpha `' . $cur['isoAlpha'] . '` must be "string" or "null" ' .
-                '(`' . gettype($cur['symbol']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertNotEmpty(
-                    trim(preg_replace('/\s+/u', '', $cur['symbol'])),
-                    'The currency property `symbol` cannot be an empty string ' .
-                    'for the isoAlpha `' . $cur['isoAlpha'] . '`'
-                );
-            }
-
-            /** decimal */
-            $this->assertArrayHasKey(
-                'decimal',
-                $cur,
-                'The property `decimal` is not present inside the `currencies` data ' .
-                'for the isoAlpha `' . $cur['isoAlpha'] . '`'
-            );
-            $is_int = is_int($cur['decimal']);
-            $this->assertTrue(
-                $is_int || is_null($cur['decimal']),
-                'The currency property `decimal` ' .
-                ' for the isoAlpha `' . $cur['isoAlpha'] . '` must be "integer" or "null" ' .
-                '(`' . gettype($cur['decimal']) . '` returned)'
-            );
-        }
+    /**
+     * @test
+     * @depends testDataSourceIntegrity
+     * @return void
+     */
+    public function testValidationCountryData(): void
+    {
+        $this->commonDataTests('countries');
     }
 
     /**
@@ -494,875 +807,863 @@ final class BaseDataStructureTest extends TestCase
      * @depends testValidationConfigFile
      * @return void
      */
-    public function testValidationGeoSetsData(): void
+    public function testDataTranslationsSourceIntegrity(): void
     {
-        $geosets = self::$dataDir . '/geoSets.php';
+        foreach (self::$geocodeDataSet['config']['settings']['languages']['inPackage'] as $language) {
+            foreach (array_keys(self::$geocodeTranslationsProperties) as $translationsSet) {
+                $dataSetName = 'translations.' . $language . '.' . $translationsSet;
+                $dataSetPath = self::$dataDir . '/Translations/' . $language . '/' . $translationsSet . '.php';
+                self::$geocodeDataStructure[$dataSetName] = self::$geocodeTranslationsProperties[$translationsSet];
+                $this->parseDataSet($dataSetName, $dataSetPath, self::$geocodeDataStructure[$dataSetName]);
 
-        $this->assertFileExists($geosets, 'The `geoSets` file is missing');
-        $geosets = require_once $geosets;
-
-        $this->assertNotEmpty($geosets);
-
-        $aq = false;
-        $geo = [];
-        $geoLv0 = [];
-        $geoLv1 = [
-            'AQ'        // Exception for Antartica (AQ - 010) that is also a continent
-        ];
-
-        foreach ($geosets as $idx => $gs) {
-
-            /** internalCode */
-            $this->assertArrayHasKey(
-                'internalCode',
-                $gs,
-                'The property `internalCode` is not present inside the `geoSets` data ' .
-                'for the index `' . $idx . '`'
-            );
-            $this->assertNotContains(
-                $gs['internalCode'],
-                self::$geocodeDataCtrl['geoSets']['internalCode'],
-                'The geoSets with `internalCode` `'
-                . $gs['internalCode'] .
-                '` is a duplicated key in the `geoSets` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^[A-Z0-9-]+$/',
-                $gs['internalCode'],
-                'The geoSets code `internalCode` `'
-                . $gs['internalCode'] .
-                '` must contains only uppercase characters, numbers and hyphens'
-            );
-            self::$geocodeDataCtrl['geoSets']['internalCode'][] = $gs['internalCode'];
-
-            /** unM49 */
-            $this->assertArrayHasKey(
-                'unM49',
-                $gs,
-                'The property `unM49` is not present inside the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-
-            /** tags */
-            $this->assertArrayHasKey(
-                'tags',
-                $gs,
-                'The property `tags` is not present inside the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-            $this->assertIsArray(
-                $gs['tags'],
-                'The property `tags` is not an array in the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-            $this->assertNotEmpty(
-                $gs['tags'],
-                'The property `tags` is an empty array in the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-
-            /** countryCodes */
-            $this->assertArrayHasKey(
-                'countryCodes',
-                $gs,
-                'The property `countryCodes` is not present inside the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-            $this->assertIsArray(
-                $gs['countryCodes'],
-                'The property `countryCodes` is not an array in the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-            $this->assertNotEmpty(
-                $gs['countryCodes'],
-                'The property `countryCodes` is an empty array in the `geoSets` data ' .
-                'for the internalCode `' . $gs['internalCode'] . '`'
-            );
-
-            /**
-             * Check for Country Codes inside the `GEOG-` internal code
-             */
-            if (preg_match('/^GEOG-/', $gs['internalCode'])) {
-                $gArr = explode('-', $gs['internalCode']);
-                $Lv = count($gArr) - 2;
-                array_pop($gArr);
-                $parent = implode('-', $gArr);
-                if (!array_key_exists($parent, $geo)) {
-                    $geo[$parent] = [];
+                /** Additional check for matches between the main and the related translation datasets */
+                if ($language == self::$defaultLanguage) {
+                    $diff = array_diff(
+                        self::$geocodeDataStructure[$translationsSet]['indexes']['main']['values'],
+                        self::$geocodeDataStructure[$dataSetName]['indexes']['main']['values'],
+                    );
+                    $this->assertTrue(
+                        empty($diff),
+                        'Translation dataset: `' . $translationsSet . '`' . "\n"
+                        . 'Language: `' . $language . '`' . "\n"
+                        . 'The following key codes in the `' . $translationsSet . '` dataset '
+                        . 'have no correspondence in the related translation data: ' . "\n"
+                        . '[' . implode(', ', $diff) . ']'
+                    );
                 }
-                foreach ($gs['countryCodes'] as $cc) {
-                    if ($Lv != 0) {
-                        $this->assertContains(
-                            $cc,
-                            $geo[$parent],
-                            'Inside the country set in the geoSets data the value `'
-                            . $cc .
-                            '` in ' . $gs['internalCode'] .
-                            ' has no correspondence in the parent group `' . $parent . '`'
-                        );
-                    }
-                    if ($Lv < 2) {
-                        $this->assertNotContains(
-                            $cc,
-                            ${'geoLv' . $Lv},
-                            'Inside the country set in the geoSets data the value `'
-                            . $cc .
-                            '` in ' . $gs['internalCode'] . ' is a duplicated key, because already present ' .
-                            'used in this or in another ' . $Lv . ' region'
-                        );
-                        $geo[$gs['internalCode']][] = $cc;
-                        array_push(${'geoLv' . $Lv}, $cc);
-                    }
-                }
-                $this->assertNotContains(
-                    $gs['unM49'],
-                    self::$geocodeDataCtrl['geoSets']['unM49'],
-                    'The geoSets with `unM49` `'
-                    . $gs['internalCode'] .
-                    '` is a duplicated key in the `geoSets` data'
-                );
-                $this->assertMatchesRegularExpression(
-                    '/^[0-9]+$/',
-                    $gs['unM49'],
-                    'The geoSets code `unM49` `'
-                    . $gs['internalCode'] .
-                    '` must be three digits long if it is a geographical item'
-                );
-                self::$geocodeDataCtrl['geoSets']['unM49'][] = $gs['unM49'];
-                if ($gs['internalCode'] == 'GEOG-AQ') {  // Exception for Antarctica (AQ - 010) that is also a continent
-                    $aq = true;
-                }
-            } else {
-                $this->assertNull(
-                    $gs['unM49'],
-                    'The geoSets code `unM49` `'
-                    . $gs['internalCode'] .
-                    '` must be null if it is a not geographical item'
-                );
             }
         }
-
-        $this->assertTrue($aq, 'It seems someone destroyed the continent of Antarctica');
-
-        $diff = array_diff($geoLv0, $geoLv1);
-        $this->assertEmpty(
-            $diff,
-            'The following country codes are present in the grouped level 0 geo-region, ' .
-            'but not in the grouped level 1 geo-region, ' .
-            '[' . implode(', ', $diff) . ']'
-        );
-
-        $diff = array_diff($geoLv1, $geoLv0);
-        $this->assertEmpty(
-            $diff,
-            'The following country codes are present in the grouped level 1 geo-region, ' .
-            'but not in the grouped level 0 geo-region, ' .
-            '[' . implode(', ', $diff) . ']'
-        );
     }
-
 
     /**
      * @test
-     * @depends testValidationCurrencyData
-     * @depends testValidationGeoSetsData
+     * @depends testDataTranslationsSourceIntegrity
      * @return void
      */
-    public function testValidationCountryData(): void
+    public function testValidationTranslationsData(): void
     {
-        $countries = self::$dataDir . '/countries.php';
-
-        $this->assertFileExists($countries, 'The `countries` file is missing');
-        $countries = require_once $countries;
-
-        $this->assertNotEmpty($countries);
-
-        $alpha2Values = array_column($countries, 'alpha2');
-
-        foreach ($countries as $idx => $cc) {
-            /** alpha2 */
-            $this->assertArrayHasKey(
-                'alpha2',
-                $cc,
-                'The property `alpha2` is not present inside the `countries` data ' .
-                'for the index `' . $idx . '`'
-            );
-            $this->assertNotContains(
-                $cc['alpha2'],
-                self::$geocodeDataCtrl['countries']['alpha2'],
-                'The country code with `alpha2` `'
-                . $cc['alpha2'] .
-                '` is a duplicated key in the `countries` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^[A-Z]{2}$/',
-                $cc['alpha2'],
-                'The country code `alpha2` `'
-                . $cc['alpha2'] .
-                '` must be two [UPPERCASE] characters long.'
-            );
-            self::$geocodeDataCtrl['countries']['alpha2'][] = $cc['alpha2'];
-
-            /** alpha3 */
-            $this->assertArrayHasKey(
-                'alpha3',
-                $cc,
-                'The property `alpha3` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotContains(
-                $cc['alpha3'],
-                self::$geocodeDataCtrl['countries']['alpha3'],
-                'The country code with `alpha3` `'
-                . $cc['alpha3'] .
-                '` is a duplicated key in the `countries` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^[A-Z]{3}$/',
-                $cc['alpha3'],
-                'The country code `alpha3` `'
-                . $cc['alpha3'] .
-                '` must be three [UPPERCASE] characters long.'
-            );
-            self::$geocodeDataCtrl['countries']['alpha3'][] = $cc['alpha3'];
-
-            /** unM49 */
-            $this->assertArrayHasKey(
-                'unM49',
-                $cc,
-                'The property `unM49` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotContains(
-                $cc['unM49'],
-                self::$geocodeDataCtrl['countries']['unM49'],
-                'The country code with `unM49` `'
-                . $cc['unM49'] .
-                '` is a duplicated key in the group of `countries` and `geoSets` data'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^\d\d\d$/',
-                $cc['unM49'],
-                'The country code `unM49` `'
-                . $cc['unM49'] .
-                '` must be three digits long.'
-            );
-            self::$geocodeDataCtrl['countries']['unM49'][] = $cc['unM49'];
-
-            /** flags */
-            $this->assertArrayHasKey(
-                'flags',
-                $cc,
-                'The property `flags` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['flags'],
-                'The property `flags` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['flags'],
-                'The property `flags` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            /** flags.emoji */
-            $this->assertArrayHasKey(
-                'emoji',
-                $cc['flags'],
-                'The property `flags.emoji` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsString(
-                $cc['flags']['emoji'],
-                'The property `flags.emoji` is not a string inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertMatchesRegularExpression(
-                '/^\p{Regional_Indicator}{2}$/u',
-                $cc['flags']['emoji'],
-                'The property `flags.emoji` is not a Regional Indicator Symbols string inside the ' .
-                '`countries` data  for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            /** flags.svg */
-            $this->assertArrayHasKey(
-                'svg',
-                $cc['flags'],
-                'The property `flags.svg` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsString(
-                $cc['flags']['svg'],
-                'The property `flags.svg` is not a string inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertTrue(
-                DataSets::isValidSVG($cc['flags']['svg']),
-                'The property `flags.svg` is not a valid SVG for the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-
-            /** dependency */
-            $this->assertArrayHasKey(
-                'dependency',
-                $cc,
-                'The property `dependency` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $is_string = is_string($cc['dependency']);
-            $this->assertTrue(
-                $is_string || is_null($cc['dependency']),
-                'The country property `dependency` ' .
-                ' for the alpha2 `' . $cc['alpha2'] . '` must be "string" or "null" ' .
-                '(`' . gettype($cc['dependency']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertNotEmpty(
-                    trim(preg_replace('/\s+/u', '', $cc['dependency'])),
-                    'The country property `dependency` cannot be an empty string ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                $this->assertContains(
-                    $cc['dependency'],
-                    $alpha2Values,
-                    'Dependency `' . $cc['dependency'] . '` does not match any existing `alpha2`'
-                );
+        foreach (self::$geocodeDataSet['config']['settings']['languages']['inPackage'] as $language) {
+            foreach (array_keys(self::$geocodeTranslationsProperties) as $translationsSet) {
+                $dataSetName = 'translations.' . $language . '.' . $translationsSet;
+                $this->commonDataTests($dataSetName, $language);
             }
+        }
+    }
 
-            /** officialName */
-            $this->assertArrayHasKey(
-                'officialName',
-                $cc,
-                'The property `officialName` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['officialName'],
-                'The property `officialName` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            foreach ($cc['officialName'] as $ln => $name) {
-                if (!array_key_exists($ln, self::$geocodeDataCtrl['countries']['officialName'])) {
-                    self::$geocodeDataCtrl['countries']['officialName'][$ln] = [];
+    /**
+     * @param string $dataSetName
+     * @param string|null $transLanguage
+     * @return void
+     */
+    private function commonDataTests(string $dataSetName, string $transLanguage = null): void
+    {
+        $mainKey = self::$currentStructure['mainKey'] =
+            self::$geocodeDataStructure[$dataSetName]['indexes']['main']['key'];
+        self::$currentStructure['dataSetName'] = $dataSetName;
+
+        /**
+         * Execute the iteration of the dataset item
+         */
+        self::$currentStructure['itemPosition'] = 0;
+        foreach (self::$geocodeDataSet[$dataSetName] as $idx => $item) {
+            self::$currentStructure['propertyName'] = self::$currentStructure['mainKeyValue'] = null;
+
+            if ($transLanguage) {
+                if (is_string($idx)) {
+                    self::$currentStructure['mainKeyValue'] = $idx;
                 }
-                $this->assertIsString(
-                    $name,
-                    'The country property `officialName` must have elements as string ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                $this->assertNotEmpty(
-                    trim(preg_replace('/\s+/u', '', $name)),
-                    'The country property `officialName` cannot have elements as empty string ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                $this->assertNotContains(
-                    $name,
-                    self::$geocodeDataCtrl['countries']['officialName'][$ln],
-                    'The country code with `officialName` ' . $name . ' for the language `'
-                    . $ln .
-                    '` is a duplicated key in the `countries` data with the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                self::$geocodeDataCtrl['countries']['officialName'][$ln][] = $name;
-                self::$geocodeDataCtrl['countries']['languages'][] = $ln;
+                $item[self::$geocodeDataStructure[$dataSetName]['indexes']['main']['key']] = $idx;
             }
 
-            /** mottos */
-            $this->assertArrayHasKey(
-                'mottos',
-                $cc,
-                'The property `mottos` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
             $this->assertIsArray(
-                $cc['mottos'],
-                'The property `mottos` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
+                $item,
+                $this->getErrorMessage(
+                    'The item must be an array. '
+                    . '"' . gettype($item) . '" returned.'
+                )
             );
-            if (!empty($cc['mottos'])) {
-                foreach ($cc['mottos'] as $key => $mottoGr) {
-                    $this->assertIsArray(
-                        $mottoGr,
-                        'The property `mottos.' . $key  . '` is not an array ' .
-                        'for the alpha2 `' . $cc['alpha2'] . '`'
-                    );
-                    if (!empty($cc['mottos'][$key])) {
-                        foreach ($cc['mottos'][$key] as $idx => $mottoKeyGr) {
-                            $this->assertIsArray(
-                                $mottoKeyGr,
-                                'The property `mottos.' . $key  . '.' . $idx . '` is not an array ' .
-                                'for the alpha2 `' . $cc['alpha2'] . '`'
+
+            /**
+             * In the case of `countries`, the `languages` must not be repeated within the entire group.
+             * Therefore, the duplicate container must be reset for each record.
+             */
+            if ($dataSetName == 'countries') {
+                self::$duplicatesControl['countries']['languagesDynBuilt'] = [];
+            }
+
+            $processed = [];
+            $queue = array_keys(self::$geocodeDataStructure[$dataSetName]['properties']);
+
+            /**
+             * Execute the iteration of the structure properties
+             */
+            while (!empty($queue)) {
+                $property = (string) array_shift($queue);
+
+                if (isset($processed[$property])) {
+                    continue;
+                }
+                $processed[$property] = true;
+
+
+                $functions = self::$geocodeDataStructure[$dataSetName]['properties'][$property];
+                $propertyToCheck = self::$currentStructure['propertyName'] = $property;
+                $itemPartWhereToCheck = $item;
+                if (preg_match('/\./', $property)) {
+                    $propArr = explode('.', $property);
+                    $propertyToCheck = array_pop($propArr);
+                    $refProperty = join('.', $propArr);
+                    $itemPartWhereToCheck = (array) $this->arrayGetDot($item, $refProperty);
+                }
+
+                if ($transLanguage) {
+                    if (
+                        $transLanguage == self::$defaultLanguage &&
+                        array_key_exists('defaultNotNullable', $functions) &&
+                        $functions['defaultNotNullable'] === true
+                    ) {
+                        $functions['nullable'] = false;
+                        $functions['canBeEmpty'] = false;
+                    } else {
+                        $functions['nullable'] = true;
+                        $functions['canBeEmpty'] = true;
+                    }
+
+                    if (array_key_exists('checkDuplicate', $functions)) {
+                        $functions['checkDuplicate'] = $dataSetName . '.' . $propertyToCheck;
+                    }
+                }
+
+                self::$currentStructure['jsonItem'] = ($property == $mainKey) ? json_encode($item) ?: null : null;
+
+                /** Check if the property exists */
+                if (
+                    (
+                        array_key_exists('requireParent', $functions) &&
+                        is_string($functions['requireParent']) &&
+                        $this->arrayGetDot($item, $functions['requireParent']) === null
+                    ) ||
+                    (
+                        array_key_exists('noKeyExistsCheck', $functions) &&
+                        !empty($functions['noKeyExistsCheck']) &&
+                        !array_key_exists($propertyToCheck, $itemPartWhereToCheck)
+                    )
+                ) {
+                    continue;
+                }
+
+                $this->assertArrayHasKey(
+                    $propertyToCheck,
+                    $itemPartWhereToCheck,
+                    $this->getErrorMessage('Missing property')
+                );
+
+                self::$currentStructure['mainKeyValue'] = $item[$mainKey];
+                self::$currentStructure['jsonItem'] = null;
+
+                $propertyFunctions = [
+                    'key' => null,
+                    'value' => $functions
+                ];
+                $propertyValues = [
+                    'key' => $propertyToCheck,
+                    'value' => $this->arrayGetDot($itemPartWhereToCheck, $propertyToCheck)
+                ];
+
+                if (
+                    array_key_exists('keysChecks', $functions) &&
+                    !empty($functions['keysChecks']) &&
+                    is_array($functions['keysChecks'])
+                ) {
+                    $propertyFunctions['key'] = $functions['keysChecks'];
+                }
+
+                foreach ($propertyFunctions as $name => $functions) {
+                    if (empty($functions)) {
+                        continue;
+                    }
+                    $itemPropertyValue = $propertyValues[$name];
+
+                    $itemPropertyType = gettype($itemPropertyValue);
+                    $isNullable = (array_key_exists('nullable', $functions) && $functions['nullable']);
+
+                    if (
+                        !empty($functions['exceptionNullable']['key']) &&
+                        !empty($functions['exceptionNullable']['regex'])
+                    ) {
+                        $getExceptionNullable = $this->arrayGetDot($item, $functions['exceptionNullable']['key']);
+                        if (
+                            preg_match(
+                                $functions['exceptionNullable']['regex'],
+                                is_string($getExceptionNullable) ? $getExceptionNullable : ''
+                            )
+                        ) {
+                            $isNullable = !$isNullable;
+                        }
+                    }
+
+                    /** Check the type of the element */
+                    if (array_key_exists('type', $functions) && !empty($functions['type'])) {
+                        $errAdditionalMex = ($isNullable) ? ' or null' : '';
+                        $checkType = $functions['type'] == $itemPropertyType;
+                        $this->assertTrue(
+                            ($isNullable) ?
+                                $checkType || is_null($itemPropertyValue) : $checkType,
+                            $this->getErrorMessage(
+                                'The property\'s type must be "' . $functions['type'] . '"'
+                                . $errAdditionalMex . '. '
+                                . '"' . $itemPropertyType . '" returned.'
+                            )
+                        );
+                    }
+                    if (
+                        array_key_exists('mustBeNull', $functions) &&
+                        !empty($functions['mustBeNull'])
+                    ) {
+                        $getMustBeNull = $this->arrayGetDot($item, $functions['mustBeNull']['key']);
+                        if (
+                            preg_match(
+                                $functions['mustBeNull']['regex'],
+                                is_string($getMustBeNull) ? $getMustBeNull : ''
+                            )
+                        ) {
+                            $this->assertNull(
+                                $itemPropertyValue,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . '\'s type must be null.'
+                                )
                             );
-                            $this->assertArrayHasKey(
-                                'text',
-                                $mottoKeyGr,
-                                'The property `mottos.' . $key  . '.' . $idx . '` has not the `text` key ' .
-                                'for the alpha2 `' . $cc['alpha2'] . '`'
+                        }
+                    }
+                    if (
+                        array_key_exists('mustBeNotNull', $functions) &&
+                        !empty($functions['mustBeNotNull'])
+                    ) {
+                        $getMustBeNotNull = $this->arrayGetDot($item, $functions['mustBeNotNull']['key']);
+                        if (
+                            preg_match(
+                                $functions['mustBeNotNull']['regex'],
+                                is_string($getMustBeNotNull) ? $getMustBeNotNull : ''
+                            )
+                        ) {
+                            $this->assertNotNull(
+                                $itemPropertyValue,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . '\'s type must be NOT null.'
+                                )
                             );
+                        }
+                    }
+
+                    /** Check if empty is allowed */
+                    if (!array_key_exists('canBeEmpty', $functions) || !$functions['canBeEmpty']) {
+                        if (is_string($itemPropertyValue)) {
                             $this->assertNotEmpty(
-                                $mottoKeyGr['text'],
-                                'The property `mottos.' . $key  . '.' . $idx . '` has the `text` array as ' .
-                                'empty for the alpha2 `' . $cc['alpha2'] . '`'
+                                trim(preg_replace('/\s+/u', '', $itemPropertyValue)),
+                                $this->getErrorMessage('The property cannot be an empty string')
                             );
-                            foreach ($mottoKeyGr['text'] as $ln => $motto) {
-                                $this->assertIsString(
-                                    $motto,
-                                    'The property `mottos.' . $key  . '.' . $idx . '.text.' . $ln . '` must ' .
-                                    'be a string for the alpha2 `' . $cc['alpha2'] . '`'
+                        } elseif (is_array($itemPropertyValue)) {
+                            $this->assertNotEmpty(
+                                $itemPropertyValue,
+                                $this->getErrorMessage('The property ' . $name . ' cannot be an empty array')
+                            );
+                        }
+                    }
+
+                    /** Check the regex */
+                    if (array_key_exists('regex', $functions) && $functions['regex'] && is_string($itemPropertyValue)) {
+                        $this->assertMatchesRegularExpression(
+                            $functions['regex'],
+                            $itemPropertyValue,
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' `' . $itemPropertyValue
+                                . '`  does not match with the pattern `' . $functions['regex'] . '`'
+                            )
+                        );
+                    }
+
+                    /** Check the minimum and maximum in case of integer */
+                    if (array_key_exists('min', $functions) && $functions['min'] && is_integer($itemPropertyValue)) {
+                        $this->assertGreaterThanOrEqual(
+                            $functions['min'],
+                            $itemPropertyValue,
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' must be greater or equal to `' . $functions['min'] . '`'
+                            )
+                        );
+                    }
+                    if (array_key_exists('max', $functions) && $functions['max'] && is_integer($itemPropertyValue)) {
+                        $this->assertLessThanOrEqual(
+                            $functions['max'],
+                            $itemPropertyValue,
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' cannot be greater than `' . $functions['max'] . '`'
+                            )
+                        );
+                    }
+
+                    /** Check the duplicates */
+                    if (
+                        array_key_exists('checkDuplicate', $functions) &&
+                        $functions['checkDuplicate'] &&
+                        is_string($itemPropertyValue) &&
+                        !empty($itemPropertyValue)
+                    ) {
+                        $haystack = $this->arrayGetDot(self::$duplicatesControl, $functions['checkDuplicate']) ?? [];
+                        if (is_array($haystack)) {
+                            $this->assertNotContains(
+                                $itemPropertyValue,
+                                $haystack,
+                                $this->getErrorMessage('Duplicated ' . $name . ' for the property')
+                            );
+                            $this->addItemToList(
+                                self::$duplicatesControl,
+                                $functions['checkDuplicate'],
+                                $itemPropertyValue
+                            );
+                        }
+                    }
+
+                    /** Check the category */
+                    if (
+                        array_key_exists('checkCategory', $functions) &&
+                        is_array($functions['checkCategory']) &&
+                        !empty($functions['checkCategory']) &&
+                        is_string($itemPropertyValue)
+                    ) {
+                        $this->assertContains(
+                            $itemPropertyValue,
+                            $functions['checkCategory'],
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' is not included in the allowed values:' .  "\n" .
+                                '[`' . implode('`, `', $functions['checkCategory']) . '`]'
+                            )
+                        );
+                    }
+
+                    /** Check if the value exists in a preset structure values */
+                    $getConditionCheckExistInDataSet = !empty($functions['conditionCheckExistInDataSet']) ?
+                        $this->arrayGetDot($item, $functions['conditionCheckExistInDataSet']['key']) : null;
+                    if (
+                        array_key_exists('checkExistInDataSet', $functions) &&
+                        $functions['checkExistInDataSet'] &&
+                        is_string($itemPropertyValue) &&
+                        (
+                            !array_key_exists('conditionCheckExistInDataSet', $functions) ||
+                            preg_match(
+                                $functions['conditionCheckExistInDataSet']['regex'],
+                                is_string($getConditionCheckExistInDataSet) ?
+                                    $getConditionCheckExistInDataSet : ''
+                            )
+                        )
+                    ) {
+                        $getCheckExistInDataSetKey = $this->arrayGetDot(
+                            self::$geocodeDataStructure,
+                            $functions['checkExistInDataSet'] . '.key'
+                        );
+                        $haystack =
+                            $this->arrayGetDot(
+                                self::$geocodeDataStructure,
+                                $functions['checkExistInDataSet'] . '.values'
+                            ) ?? [];
+                        if (is_array($haystack)) {
+                            $this->assertContains(
+                                $itemPropertyValue,
+                                $haystack,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' `' . $itemPropertyValue . '` '
+                                    . 'does not exist for the key '
+                                    . '`'
+                                    . (is_string($getCheckExistInDataSetKey) ? $getCheckExistInDataSetKey : '')
+                                    . '`'
+                                    . ' in the dataset '
+                                    . '`' . explode('.', $functions['checkExistInDataSet'])[0] . '`'
+                                )
+                            );
+                        }
+                    }
+
+                    /** Check if the value DOESN'T exist in a preset structure values */
+                    $getConditionCheckNotExistInDataSet = !empty($functions['conditionCheckNotExistInDataSet']) ?
+                        $this->arrayGetDot($item, $functions['conditionCheckNotExistInDataSet']['key']) : null;
+                    if (
+                        array_key_exists('checkNotExistInDataSet', $functions) &&
+                        $functions['checkNotExistInDataSet'] &&
+                        is_string($itemPropertyValue) &&
+                        (
+                            !array_key_exists('conditionCheckNotExistInDataSet', $functions) ||
+                            preg_match(
+                                $functions['conditionCheckNotExistInDataSet']['regex'],
+                                is_string($getConditionCheckNotExistInDataSet) ?
+                                    $getConditionCheckNotExistInDataSet : ''
+                            )
+                        )
+                    ) {
+                        $getCheckNotExistInDataSetKey = $this->arrayGetDot(
+                            self::$geocodeDataStructure,
+                            $functions['checkExistInDataSet'] . '.key'
+                        );
+                        $haystack =
+                            $this->arrayGetDot(
+                                self::$geocodeDataStructure,
+                                $functions['checkNotExistInDataSet'] . '.values'
+                            ) ?? [];
+                        if (is_array($haystack)) {
+                            $this->assertNotContains(
+                                $itemPropertyValue,
+                                $haystack,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' `' . $itemPropertyValue . '` '
+                                    . 'must not exist for the key '
+                                    . '`'
+                                    . (is_string($getCheckNotExistInDataSetKey) ? $getCheckNotExistInDataSetKey : '')
+                                    . '`'
+                                    . ' in the dataset '
+                                    . '`' . explode('.', $functions['checkNotExistInDataSet'])[0] . '`'
+                                )
+                            );
+                        }
+                    }
+
+                    /** Check for dynamic array */
+                    if (
+                        array_key_exists('isDynamic', $functions) &&
+                        !empty($functions['isDynamic']) &&
+                        is_array($itemPropertyValue) &&
+                        !empty($itemPropertyValue)
+                    ) {
+                        switch ($functions['isDynamic']['typeOfArray']) {
+                            case 'list':
+                                $this->assertTrue(
+                                    Utils::isList($itemPropertyValue),
+                                    $this->getErrorMessage(
+                                        'The property ' . $name . ' must be must be a `list` of items. '
+                                        . '`Associative array` returned.'
+                                    )
                                 );
-                                $this->assertNotEmpty(
-                                    trim(preg_replace('/\s+/u', '', $motto)),
-                                    'The property `mottos.' . $key  . '.' . $idx . '.text.' . $ln . '` ' .
-                                    'cannot be an empty string for the alpha2 `' . $cc['alpha2'] . '`'
+                                break;
+                            case 'associative':
+                                $this->assertFalse(
+                                    Utils::isList($itemPropertyValue),
+                                    $this->getErrorMessage(
+                                        'The property ' . $name . ' must be must be an `Associative array`. '
+                                        . '`List` of items returned.'
+                                    )
                                 );
-                                self::$geocodeDataCtrl['countries']['languages'][] = $ln;
+                                break;
+                            default:
+                        }
+
+                        /** Dynamic Build */
+                        if (
+                            array_key_exists('dynamicBuild', $functions['isDynamic']) &&
+                            !empty($functions['isDynamic']['dynamicBuild'])
+                        ) {
+                            $dyn = $functions['isDynamic']['dynamicBuild'];
+                            $dyn['noKeyExistsCheck'] = true;
+
+                            // --- CASE: associative object with fixed keys (schema closed) ---
+                            if (
+                                $functions['isDynamic']['typeOfArray'] === 'associative' &&
+                                array_key_exists('fixedKeys', $dyn) &&
+                                is_array($dyn['fixedKeys']) &&
+                                !empty($dyn['fixedKeys'])
+                            ) {
+                                $allowedKeys = array_keys($dyn['fixedKeys']);
+                                $actualKeys  = array_keys($itemPropertyValue);
+
+                                // Check for unknown keys
+                                $unknown = array_values(array_diff($actualKeys, $allowedKeys));
+                                $this->assertTrue(
+                                    empty($unknown),
+                                    $this->getErrorMessage(
+                                        'Unexpected keys found: [' . implode(', ', $unknown) . ']. '
+                                        . 'Allowed keys are: [' . implode(', ', $allowedKeys) . ']'
+                                    )
+                                );
+
+                                // Build rules for ALL fixed keys
+                                foreach ($dyn['fixedKeys'] as $fk => $fkRules) {
+                                    $fkRules['requireParent'] = $property;
+                                    $newProp = $property . '.' . $fk;
+                                    self::$geocodeDataStructure[$dataSetName]['properties'][$newProp] = $fkRules;
+                                    $queue[] = $newProp;
+                                }
+                                continue;
+                            } else {
+                                // --- DEFAULT (list or associative without fixedKeys): build on actual keys ---
+                                foreach ($itemPropertyValue as $k => $v) {
+                                    self::$geocodeDataStructure[$dataSetName]['properties'][$property . '.' . $k] =
+                                        $dyn;
+                                    $queue[] = $property . '.' . $k;
+                                }
                             }
                         }
                     }
-                }
-            }
 
-            /** currencies */
-            $this->assertArrayHasKey(
-                'currencies',
-                $cc,
-                'The property `currencies` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['currencies'],
-                'The property `currencies` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['currencies'],
-                'The property `currencies` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            /** currencies.legalTenders */
-            $this->assertArrayHasKey(
-                'legalTenders',
-                $cc['currencies'],
-                'The property `currencies.legalTenders` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['currencies']['legalTenders'],
-                'The property `currencies.legalTenders` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $curInTender = [];
-            if (!empty($cc['currencies']['legalTenders'])) {
-                foreach ($cc['currencies']['legalTenders'] as $cur) {
-                    $curInTender[] = $cur;
-                    $this->assertContains(
-                        $cur,
-                        self::$geocodeDataCtrl['currencies']['isoAlpha'],
-                        'The property `currencies.legalTenders` with value `'
-                        . $cur .
-                        '` for the alpha2 `' . $cc['alpha2'] . '` ' .
-                        'is not in the list of the ISO currencies'
-                    );
-                }
-            }
-            /** currencies.widelyAccepted */
-            $this->assertArrayHasKey(
-                'widelyAccepted',
-                $cc['currencies'],
-                'The property `currencies.widelyAccepted` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['currencies']['widelyAccepted'],
-                'The property `currencies.widelyAccepted` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            if (!empty($cc['currencies']['widelyAccepted'])) {
-                foreach ($cc['currencies']['widelyAccepted'] as $cur) {
-                    $this->assertNotContains(
-                        $cur,
-                        $curInTender,
-                        'The property `currencies.widelyAccepted` with value `'
-                        . $cur .
-                        '` already exits in `currencies.legalTenders` for the alpha2 `' . $cc['alpha2'] . '`'
-                    );
-                    $this->assertContains(
-                        $cur,
-                        self::$geocodeDataCtrl['currencies']['isoAlpha'],
-                        'The property `currencies.widelyAccepted` with value `'
-                        . $cur .
-                        '` for the alpha2 `' . $cc['alpha2'] . '` ' .
-                        'is not in the list of the ISO currencies'
-                    );
-                }
-            }
-
-            /** dialCodes */
-            $this->assertArrayHasKey(
-                'dialCodes',
-                $cc,
-                'The property `dialCodes` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['dialCodes'],
-                'The property `dialCodes` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['dialCodes'],
-                'The property `dialCodes` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            /** dialCodes sub properties */
-            foreach (['deJure', 'deFacto', 'exceptions'] as $dialCodesKey) {
-                $this->assertArrayHasKey(
-                    $dialCodesKey,
-                    $cc['dialCodes'],
-                    'The property `dialCodes.' . $dialCodesKey . '` is not present inside the `countries` ' .
-                    'data for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                $this->assertIsArray(
-                    $cc['dialCodes'][$dialCodesKey],
-                    'The property `dialCodes.' . $dialCodesKey . '` is not an array ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                if ($dialCodesKey == 'exceptions') {
-                } else {
-                    foreach ($cc['dialCodes'][$dialCodesKey] as $dial) {
-                        $this->assertMatchesRegularExpression(
-                            '/^\+\d+$/',
-                            $dial,
-                            'The property `dialCodes.main`=' . $dial . ' has wrong format ' .
-                            'for the alpha2 `' . $cc['alpha2'] . '`'
+                    /** geoSets check for geographical zone */
+                    $getInternalCode = $this->arrayGetDot($item, 'internalCode');
+                    if (
+                        array_key_exists('checkGeographicalZones', $functions) &&
+                        !empty($functions['checkGeographicalZones']) &&
+                        is_string($getInternalCode)
+                    ) {
+                        $this->checkGeographicalZones(
+                            $getInternalCode,
+                            (array) $itemPropertyValue
                         );
                     }
+
+                    /** countries check for valid SVG */
+                    if (
+                        array_key_exists('isValidSVG', $functions) &&
+                        !empty($functions['isValidSVG']) &&
+                        is_string($itemPropertyValue)
+                    ) {
+                        $this->assertTrue(
+                            DataSets::isValidSVG($itemPropertyValue),
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' is not a valid SVG.'
+                            )
+                        );
+                    }
+
+                    /** countries check for time zone (https://www.iana.org/time-zones) */
+                    if (
+                        array_key_exists('checkTimeZone', $functions) &&
+                        !empty($functions['checkTimeZone'])
+                    ) {
+                        $this->assertContains(
+                            $itemPropertyValue,
+                            DateTimeZone::listIdentifiers(DateTimeZone::ALL),
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' `'
+                                . (is_string($itemPropertyValue) ? $itemPropertyValue : '')
+                                . '` is not a valid time zone.'
+                            )
+                        );
+                    }
+
+                    /** Check for a valid BCP 47 locale */
+                    if (
+                        array_key_exists('validateBCP47', $functions) &&
+                        !empty($functions['validateBCP47']) &&
+                        is_string($itemPropertyValue)
+                    ) {
+                        $this->assertTrue(
+                            $this->validateLocale($itemPropertyValue),
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' `' . $itemPropertyValue . '` is not a valid BCP47 locale.'
+                            )
+                        );
+                    }
+
+                    /** Check for a valid country code IDN  */
+                    if (
+                        array_key_exists('validateUnicodeIdn', $functions) &&
+                        !empty($functions['validateUnicodeIdn'])
+                    ) {
+                        $this->assertTrue(
+                            $this->validateUnicodeIdn($itemPartWhereToCheck),
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' `'
+                                . (is_string($itemPropertyValue) ? $itemPropertyValue : '')
+                                . '` '
+                                . 'is not a valid correspondence with punycode.'
+                            )
+                        );
+                    }
+
+                    /** [TODO] */
                 }
             }
-
-            /** ccTld */
-            $this->assertArrayHasKey(
-                'ccTld',
-                $cc,
-                'The property `ccTld` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $is_string = is_string($cc['ccTld']);
-            $this->assertTrue(
-                $is_string || is_null($cc['ccTld']),
-                'The country property `ccTld` ' .
-                ' for the alpha2 `' . $cc['alpha2'] . '` must be "string" or "null" ' .
-                '(`' . gettype($cc['ccTld']) . '` returned)'
-            );
-            if ($is_string) {
-                $this->assertNotEmpty(
-                    trim(preg_replace('/\s+/u', '', $cc['ccTld'])),
-                    'The country property `ccTld` cannot be an empty string ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-            }
-
-            /** timeZones */
-            $this->assertArrayHasKey(
-                'timeZones',
-                $cc,
-                'The property `timeZones` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['timeZones'],
-                'The property `timeZones` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['timeZones'],
-                'The property `timeZones` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-
-            /** localesIcu */
-            $this->assertArrayHasKey(
-                'localesIcu',
-                $cc,
-                'The property `localesIcu` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['localesIcu'],
-                'The property `localesIcu` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $locs = [];
-            foreach ($cc['localesIcu'] as $loc) {
-                $this->assertNotContains(
-                    $loc,
-                    $locs,
-                    'The property `localesIcu` with value `'
-                    . $loc .
-                    '` already exits (duplicated) in `localesIcu` for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-                self::$geocodeDataCtrl['countries']['languages'][] = $loc;
-                $locs[] = $loc;
-            }
-
-            /** otherAppsIds */
-            $this->assertArrayHasKey(
-                'otherAppsIds',
-                $cc,
-                'The property `otherAppsIds` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertIsArray(
-                $cc['otherAppsIds'],
-                'The property `otherAppsIds` is not an array ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $this->assertNotEmpty(
-                $cc['otherAppsIds'],
-                'The property `otherAppsIds` is empty ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            /** otherAppsIds.geoNamesOrg */
-            $this->assertArrayHasKey(
-                'geoNamesOrg',
-                $cc['otherAppsIds'],
-                'The property `otherAppsIds.geoNamesOrg` is not present inside the `countries` data ' .
-                'for the alpha2 `' . $cc['alpha2'] . '`'
-            );
-            $is_int = is_int($cc['otherAppsIds']['geoNamesOrg']);
-            $this->assertTrue(
-                $is_int || is_null($cc['otherAppsIds']['geoNamesOrg']),
-                'The country property `otherAppsIds.geoNamesOrg` ' .
-                ' for the alpha2 `' . $cc['alpha2'] . '` must be "string" or "null" ' .
-                '(`' . gettype($cc['otherAppsIds']['geoNamesOrg']) . '` returned)'
-            );
-            if ($is_int) {
-                $this->assertTrue(
-                    $cc['otherAppsIds']['geoNamesOrg'] > 0,
-                    'The country property `otherAppsIds.geoNamesOrg` cannot be zero ' .
-                    'for the alpha2 `' . $cc['alpha2'] . '`'
-                );
-            }
-
-
-            // [TODO] LANGUAGES
+            self::$currentStructure['itemPosition']++;
         }
-
-
-        self::$geocodeDataCtrl['countries']['languages']
-            = array_values(array_unique(self::$geocodeDataCtrl['countries']['languages']));
     }
 
-
-    /** @test
-     * @depends testValidationCountryData
+    /**
+     * @param string $dataSetName
+     * @param string $dataSetPath
+     * @param array<string, mixed> $structure
      * @return void
      */
-    public function testValidationTranslationsFiles(): void
+    private function parseDataSet(string $dataSetName, string $dataSetPath, array $structure): void
     {
-        $countries = [];
-        $currencies = [];
-        $geosets = [];
-        $languages = [];
-        foreach (self::$Config['settings']['languages']['inPackage'] as $lang) {
-            $transDir = self::$dataDir . '/Translations/' . $lang . '/';
-            self::$geocodeDataCtrl['translations']['countries'][$lang]
-                = self::$geocodeTranslationsProperties['countries'];
-
-            self::$geocodeDataCtrl['translations']['geosets'][$lang]
-                = self::$geocodeTranslationsProperties['geosets'];
-
-            self::$geocodeDataCtrl['translations']['currencies'][$lang]
-                = self::$geocodeTranslationsProperties['currencies'];
-
-            self::$geocodeDataCtrl['translations']['languages'][$lang]
-                = self::$geocodeTranslationsProperties['languages'];
-
-            foreach (array_keys(self::$geocodeDataCtrl['translations']) as $item) {
-                $this->assertFileExists(
-                    $transDir . $item . '.php',
-                    'The translation ' . $item . ' file is missing'
-                );
-                ${$item} = require_once($transDir . $item . '.php');
-            }
-
-            if ($lang == self::$Config['settings']['languages']['default']) {
-                foreach (self::$geocodeDataCtrl['countries']['alpha2'] as $cc) {
-                    $this->assertArrayHasKey(
-                        $cc,
-                        $countries,
-                        'The country code `' . $cc . '`does not exist in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertIsArray(
-                        /** @phpstan-ignore-next-line */
-                        $countries[$cc],
-                        'The country code `' . $cc . '`is not an array in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertNotEmpty(
-                        $countries[$cc],
-                        'The country code `' . $cc . '`is empty in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertArrayHasKey(
-                        'name',
-                        $countries[$cc],
-                        'The country code `' . $cc . '`has not the property `name` in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertNotContains(
-                        $countries[$cc]['name'],
-                        self::$geocodeDataCtrl['translations']['countries'][$lang]['name'],
-                        'The country property `name` as "' . $countries[$cc]['name'] .
-                        '" for the translation `' . $lang .
-                        '` is a duplicated key in `alpha2` "' . $cc . '"'
-                    );
-                    self::$geocodeDataCtrl['translations']['countries'][$lang]['name'][] = $countries[$cc]['name'];
-                    $this->assertArrayHasKey(
-                        'fullName',
-                        $countries[$cc],
-                        'The country code `' . $cc . '` has the missing property ' .
-                        '`fullName` in `translations.' . $lang . '.countries` dataset'
-                    );
-                    $this->assertNotContains(
-                        $countries[$cc]['fullName'],
-                        self::$geocodeDataCtrl['translations']['countries'][$lang]['fullName'],
-                        'The country property `fullName` as "' . $countries[$cc]['fullName'] .
-                        '" for the translation `' . $lang .
-                        '` is a duplicated key in `alpha2` "' . $cc . '"'
-                    );
-                    self::$geocodeDataCtrl['translations']['countries'][$lang]['fullName'][] =
-                        $countries[$cc]['fullName'];
-                    $this->assertArrayHasKey(
-                        'demonyms',
-                        $countries[$cc],
-                        'The country code `' . $cc . '` has the missing property `demonyms` in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertArrayHasKey(
-                        'keywords',
-                        $countries[$cc],
-                        'The country code `' . $cc . '` has the missing property `keywords` in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-
-
-                    $this->assertIsString(
-                        $countries[$cc]['name'],
-                        'The country code `' . $cc . '` property `name` must be string in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-                    $this->assertNotEmpty(
-                        trim(preg_replace('/\s+/u', '', $countries[$cc]['name'])),
-                        'The country code `' . $cc . '` has the property `name` as empty in `translations.' .
-                        $lang . '.countries` dataset'
-                    );
-
-                    $this->assertIsString(
-                        $countries[$cc]['fullName'],
-                        'The country code `' . $cc . '` property `fullName` must be string ' .
-                        'in `translations.' . $lang . '.countries` dataset'
-                    );
-                    $this->assertNotEmpty(
-                        trim(preg_replace('/\s+/u', '', $countries[$cc]['fullName'])),
-                        'The country code `' . $cc . '` has the property `fullName` as ' .
-                        'empty in `translations.' . $lang . '.countries` dataset'
-                    );
-
-                    $this->assertIsArray(
-                        $countries[$cc]['demonyms'],
-                        'The country code `' . $cc . '` property `demonyms` must be array ' .
-                        'in `translations.' . $lang . '.countries` dataset'
-                    );
-
-                    $this->assertIsArray(
-                        $countries[$cc]['keywords'],
-                        'The country code `' . $cc . '` property `keywords` must be array ' .
-                        'in `translations.' . $lang . '.countries` dataset'
-                    );
-                }
-
-                foreach (self::$geocodeDataCtrl['currencies']['isoAlpha'] as $cur) {
-                    $this->assertArrayHasKey(
-                        $cur,
-                        $currencies,
-                        'The currency code `' . $cur . '`does not exist in `translations.' .
-                        $lang . '.currencies` dataset'
-                    );
-                    /** @phpstan-ignore-next-line */
-                    $currencyName = $currencies[$cur]['name'];
-                    $this->assertIsString(
-                        $currencyName,
-                        'The currency code `' . $cur . '` must be string in `translations.' .
-                        $lang . '.currencies` dataset'
-                    );
-                    $this->assertNotEmpty(
-                        trim(preg_replace('/\s+/u', '', $currencyName)),
-                        'The currency code `' . $cur . '` is empty in `translations.' .
-                        $lang . '.currencies` dataset'
-                    );
-                    $this->assertNotContains(
-                        $currencyName,
-                        self::$geocodeDataCtrl['translations']['currencies'][$lang]['name'],
-                        'The currencies property `name` as "' . $currencyName .
-                        '" for the translation `' . $lang .
-                        '` is a duplicated key in `isoAlpha` "' . $cur . '"'
-                    );
-                    self::$geocodeDataCtrl['translations']['currencies'][$lang]['name'][] = $currencyName;
-                }
-
-
-                foreach (self::$geocodeDataCtrl['geoSets']['internalCode'] as $gs) {
-                    $this->assertArrayHasKey(
-                        $gs,
-                        $geosets,
-                        'The geoSets internal code `' . $gs . '`does not exist in `translations.' .
-                        $lang . '.geoSets` dataset'
-                    );
-                    /** @phpstan-ignore-next-line */
-                    $geoSetName = $geosets[$gs]['name'];
-                    $this->assertIsString(
-                        $geoSetName,
-                        'The geoSets internal code `' . $gs . '` must be string in `translations.' .
-                        $lang . '.geoSets` dataset'
-                    );
-                    $this->assertNotEmpty(
-                        trim(preg_replace('/\s+/u', '', $geoSetName)),
-                        'The geoSets internal code `' . $gs . '` is empty in `translations.' .
-                        $lang . '.geoSets` dataset'
-                    );
-                    $this->assertNotContains(
-                        $geoSetName,
-                        self::$geocodeDataCtrl['translations']['geosets'][$lang]['name'],
-                        'The geoSets property `name` as "' . $geoSetName .
-                        '" for the translation `' . $lang .
-                        '` is a duplicated key in `internalCode` "' . $gs . '"'
-                    );
-                    self::$geocodeDataCtrl['translations']['geosets'][$lang]['name'][] = $geoSetName;
-                }
-
-
-//                foreach (self::$geocodeDataCtrl['ln'] as $ln) {
-//                    $ln = explode('-', $ln)[0];
-//                    $this->assertArrayHasKey(
-//                        $ln,
-//                        $languages,
-//                        'The language internal code `' . $ln . '`does not exist in `translations.' .
-//                        $lang . '.languages` dataset'
-//                    );
-//                    $this->assertIsString(
-//                        /** @NOphpstan-ignore-next-line */
-//                        $languages[$ln],
-//                        'The language internal code `' . $ln . '` must be string in `translations.' .
-//                        $lang . '.languages` dataset'
-//                    );
-//                    $this->assertNotEmpty(
-//                        trim(preg_replace('/\s+/u', '', $languages[$ln])),
-//                        'The language internal code `' . $ln . '` is empty in `translations.' .
-//                        $lang . '.languages` dataset'
-//                    );
-//                }
+        $this->assertFileExists($dataSetPath, 'The `' . $dataSetPath . '` file is missing');
+        $dataSet = require_once $dataSetPath;
+        $this->assertIsArray($dataSet, 'The dataset `' . $dataSetName . '` is not an array');
+        $this->assertNotEmpty($dataSet, 'The dataset `' . $dataSetName . '` is empty');
+        foreach ($structure['indexes'] as $indexName => $indexParam) {
+            if (
+                !array_key_exists('doNotSetOnInit', $indexParam) ||
+                empty($indexParam['doNotSetOnInit'])
+            ) {
+                self::$geocodeDataStructure[$dataSetName]['indexes'][$indexName]['values'] =
+                    ($indexParam['key'] == 'translationIndex') ?
+                        array_keys($dataSet) :
+                        array_values(
+                            array_filter(
+                                array_column($dataSet, $indexParam['key']),
+                                static fn ($v) => $v !== null
+                            )
+                        );
             }
         }
+        self::$geocodeDataSet[$dataSetName] = $dataSet;
+    }
+
+    /**
+     * @param array<string, string|array<string>> $ccIdnBlock
+     * @return bool
+     */
+    private function validateUnicodeIdn(array $ccIdnBlock): bool
+    {
+        if (
+            !isset($ccIdnBlock['unicode']) ||
+            !isset($ccIdnBlock['punycode']) ||
+            !is_string($ccIdnBlock['unicode']) ||
+            !is_string($ccIdnBlock['punycode'])
+        ) {
+            return false;
+        }
+
+        $unicodeDomain = substr($ccIdnBlock['unicode'], 1);
+        $punycodeDomain = substr($ccIdnBlock['punycode'], 1);
+
+        // Convert unicode → punycode
+        $convertedAscii = idn_to_ascii(
+            $unicodeDomain,
+            IDNA_DEFAULT,
+            INTL_IDNA_VARIANT_UTS46
+        );
+
+        if ($convertedAscii === false || $convertedAscii !== $punycodeDomain) {
+            return false;
+        }
+
+        // Convert punycode → unicode
+        $convertedUnicode = idn_to_utf8(
+            $punycodeDomain,
+            IDNA_DEFAULT,
+            INTL_IDNA_VARIANT_UTS46
+        );
+
+        if ($convertedUnicode === false || $convertedUnicode !== $unicodeDomain) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $locale
+     * @return bool
+     */
+    private function validateLocale(string $locale): bool
+    {
+        // 1) Regex validation first: language[-Script][-Region]
+        // - language: 2-3 lowercase letters
+        // - script:   4 letters TitleCase
+        // - region:   ISO3166 alpha2 (2 uppercase) OR UN M49 (3 digits)
+        if (!preg_match('/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|\d{3}))?$/', $locale)) {
+            return false;
+        }
+
+        $loc = explode('-', $locale);
+        $count = count($loc);
+
+        $language = $loc[0];
+
+        $script = null;
+        $region = null;
+
+        if ($count === 2) {
+            if (strlen($loc[1]) === 4) {
+                $script = $loc[1];
+            } else {
+                $region = $loc[1];
+            }
+        } elseif ($count === 3) {
+            $script = $loc[1];
+            $region = $loc[2];
+        }
+
+        // --- LANGUAGE ---
+        $lang = strlen($language);
+        if ($lang === 3) {
+            //(ISO 639-3)
+            $path = 'languages.indexes.main.values';
+        } elseif ($lang === 2) {
+            //(ISO 639-1)
+            $path = 'languages.indexes.secondary.values';
+        } else {
+            return false;
+        }
+        if (!in_array($language, (array) $this->arrayGetDot(self::$geocodeDataStructure, $path))) {
+            return false;
+        }
+
+        // --- SCRIPT ([TODO]) ---
+        if ($script !== null) {
+//            if (!in_array($script, $this->arrayGetDot(self::$geocodeDataStructure, 'scripts.main.values'))) {
+//                return false;
+//            }
+        }
+
+        // --- REGION ---
+        if ($region !== null) {
+            if (ctype_digit($region) && strlen($region) === 3) {
+                if (
+                    !in_array(
+                        $region,
+                        (array)
+                          $this->arrayGetDot(self::$geocodeDataStructure, 'countries.indexes.secondary.values')
+                    )
+                ) {
+                    if (
+                        !in_array(
+                            $region,
+                            (array)
+                              $this->arrayGetDot(self::$geocodeDataStructure, 'geoSets.indexes.secondary.values')
+                        )
+                    ) {
+                        return false;
+                    }
+                }
+            } elseif (ctype_alpha($region) && strlen($region) === 2) {
+                if (
+                    !in_array(
+                        $region,
+                        (array) $this->arrayGetDot(self::$geocodeDataStructure, 'countries.indexes.main.values')
+                    )
+                ) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param string $geoZone
+     * @param array<string> $countryCodes
+     * @return void
+     */
+    private function checkGeographicalZones(string $geoZone, array $countryCodes): void
+    {
+        if (!preg_match('/^GEOG-/', $geoZone)) {
+            return;
+        }
+
+        if (substr_count($geoZone, '-') == 1) {
+            self::$geocodeDataStructure['geoSets']['indexes']['checkCountries']['values'] =
+                array_merge(
+                    self::$geocodeDataStructure['geoSets']['indexes']['checkCountries']['values'],
+                    $countryCodes
+                );
+        }
+
+        foreach (self::$geocodeDataSet['geoSets'] as $geoSet) {
+            if (
+                !preg_match('/^GEOG-/', $geoSet['internalCode']) ||
+                $geoSet['internalCode'] == $geoZone ||
+                preg_match('/^' . preg_quote($geoZone, '/') . '/', $geoSet['internalCode'])
+            ) {
+                continue;
+            }
+
+            if (preg_match('/^' . preg_quote($geoSet['internalCode'], '/') . '/', $geoZone)) {
+                $diff = array_diff($countryCodes, $geoSet['countryCodes']);
+                $this->assertTrue(
+                    empty($diff),
+                    $this->getErrorMessage(
+                        'The property '
+                        . 'has the following elements not contained in the ascendant zone '
+                        . '`' . $geoSet['internalCode'] . '`:' . "\n"
+                        . '[' . implode(', ', $diff) . ']'
+                    )
+                );
+            } else {
+                $intersect = array_intersect($countryCodes, $geoSet['countryCodes']);
+                $this->assertTrue(
+                    empty($intersect),
+                    $this->getErrorMessage(
+                        'The property '
+                        . 'has the following elements contained in the not directly related zone '
+                        . '`' . $geoSet['internalCode'] . '`:' . "\n"
+                        . '[' . implode(', ', $intersect) . ']'
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $array
+     * @param string $path
+     * @param string $value
+     * @return void
+     */
+    private function addItemToList(array &$array, string $path, string $value): void
+    {
+        if ($path === '') {
+            $array[] = $value;
+            return;
+        }
+
+        $keys = explode('.', $path);
+
+        foreach ($keys as $key) {
+            if (!isset($array[$key]) || !is_array($array[$key])) {
+                $array[$key] = [];
+            }
+
+            $array = &$array[$key];
+        }
+
+        $array[] = $value;
+    }
+
+    /**
+     * @param array<string, mixed> $array
+     * @param string $path
+     * @return string|integer|array<string, mixed>|bool|null
+     */
+    private function arrayGetDot(array $array, string $path)
+    {
+        if ($path === '') {
+            return $array;
+        }
+
+        foreach (explode('.', $path) as $key) {
+            if (!is_array($array) || !array_key_exists($key, $array)) {
+                return null;
+            }
+
+            $array = $array[$key];
+        }
+
+        return $array;
+    }
+
+    /**
+     * @param string $message
+     * @return string
+     */
+    private function getErrorMessage(string $message)
+    {
+        $errMex = 'Index: `' . self::$currentStructure['itemPosition']  . '`' . "\n";
+        if (self::$currentStructure['jsonItem']) {
+            $errMex .=  'Item Data: ' . self::$currentStructure['jsonItem'] ;
+        } else {
+            $errMex .= 'Item with `' . self::$currentStructure['mainKey']
+                . '` = `' . self::$currentStructure['mainKeyValue']  . '`';
+        }
+        return 'Dataset: `' . self::$currentStructure['dataSetName']  .  '`' . "\n"
+            . $errMex . "\n"
+            . 'Property: `' . self::$currentStructure['propertyName']  . '`' . "\n"
+            . 'Error: ' . $message .  "\n";
     }
 }
