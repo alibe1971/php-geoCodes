@@ -22,6 +22,9 @@ final class BaseDataStructureTest extends TestCase
      */
     private static string $defaultLanguage;
 
+
+    private static string $timeZoneVersion;
+
     /**
      * @var array<string, mixed>
      */
@@ -299,7 +302,7 @@ final class BaseDataStructureTest extends TestCase
                         'dynamicBuild' => [
                             'type' => 'string',
                             'regex' => '/^[A-Za-z][A-Za-z0-9._+-]*(?:\/[A-Za-z0-9][A-Za-z0-9._+-]*)+$/',
-//                            'checkTimeZone' => true // alibe da verificare
+                            'checkTimeZone' => true
                         ]
                     ]
                 ],
@@ -535,10 +538,75 @@ final class BaseDataStructureTest extends TestCase
                         'dynamicBuild' => [
                             'type' => 'string',
                             'regex' => '/^[A-Z][a-z]{3}$/',
-//                            'checkExistInDataSet' => 'script.indexes.main.values'
+                            'checkExistInDataSet' => 'scripts.indexes.main'
                         ]
                     ]
                 ]
+            ]
+        ],
+        'scripts' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'code',
+                    'values' => []
+                ],
+                'secondary' => [
+                    'key' => 'numeric',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'code' => [
+                    'type' => 'string',
+                    'regex' => '/^[A-Z][a-z]{3}$/',
+                    'checkDuplicate' => 'scripts.code'
+                ],
+                'numeric' => [
+                    'type' => 'string',
+                    'regex' => '/^[0-9]{3}$/',
+                    'checkDuplicate' => 'scripts.numeric'
+                ],
+                'writingDirection' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[a-z]{3}$/',
+                    'checkCategory' => [ 'rtl', 'ltr' ]
+                ],
+                'unicode' => [],
+                'unicode.version' => [
+                    'type' => 'string',
+                    'nullable' => true,
+                    'regex' => '/^[0-9]+\.[0-9]$/',
+                ],
+                'unicode.ranges' => [
+                    'type' => 'array',
+                    'canBeEmpty' => true,
+                    'isDynamic' => [
+                        'typeOfArray' => 'list', // or `associative`
+                        'dynamicBuild' => [
+                            'type' => 'array',
+                            'canBeEmpty' => false,
+                            'minCount' => 1,
+                            'maxCount' => 2,
+                            'isDynamic' => [
+                                'typeOfArray' => 'list', // or `associative`
+                                'dynamicBuild' => [
+                                    'type' => 'string',
+                                    'regex' => '/^(?:[0-9A-F]{4,5}|10[0-9A-F]{4})$/',
+                                    'checkHexadecimalContinuity' => true,
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'unicode.totalCodePoints' => [
+                    'type' => 'integer',
+                    'min' => 0
+
+                ]
+            ],
+            'afterRecordTest' => [
+                'checkIntegrityOfRangesPoints' => true
             ]
         ]
     ];
@@ -641,6 +709,27 @@ final class BaseDataStructureTest extends TestCase
                     'checkDuplicate' => null
                 ]
             ]
+        ],
+        'scripts' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ]
+            ],
+            'properties' => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'regex' => '/^[A-Z][a-z]{3}$/',
+                    'checkDuplicate' => null,
+                    'checkExistInDataSet' => 'scripts.indexes.main'
+                ],
+                'name' => [
+                    'type' => 'string',
+                    'defaultNotNullable' => true,
+                    'checkDuplicate' => null
+                ]
+            ]
         ]
     ];
 
@@ -661,6 +750,7 @@ final class BaseDataStructureTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::$dataDir = dirname(__DIR__) . '/src/Data';
+        self::$timeZoneVersion = timezone_version_get();
     }
 
     /**
@@ -755,19 +845,9 @@ final class BaseDataStructureTest extends TestCase
      * @depends testDataSourceIntegrity
      * @return void
      */
-    public function testValidationLanguagesData(): void
+    public function testValidationCountryData(): void
     {
-        $this->commonDataTests('languages');
-    }
-
-    /**
-     * @test
-     * @depends testDataSourceIntegrity
-     * @return void
-     */
-    public function testValidationCurrencyData(): void
-    {
-        $this->commonDataTests('currencies');
+        $this->commonDataTests('countries');
     }
 
     /**
@@ -791,15 +871,34 @@ final class BaseDataStructureTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @depends testDataSourceIntegrity
+     * @return void
+     */
+    public function testValidationCurrencyData(): void
+    {
+        $this->commonDataTests('currencies');
+    }
 
     /**
      * @test
      * @depends testDataSourceIntegrity
      * @return void
      */
-    public function testValidationCountryData(): void
+    public function testValidationLanguagesData(): void
     {
-        $this->commonDataTests('countries');
+        $this->commonDataTests('languages');
+    }
+
+    /**
+     * @test
+     * @depends testDataSourceIntegrity
+     * @return void
+     */
+    public function testValidationScriptsData(): void
+    {
+        $this->commonDataTests('scripts');
     }
 
     /**
@@ -868,6 +967,10 @@ final class BaseDataStructureTest extends TestCase
         foreach (self::$geocodeDataSet[$dataSetName] as $idx => $item) {
             self::$currentStructure['propertyName'] = self::$currentStructure['mainKeyValue'] = null;
 
+            /**
+             * The translations have a different structure.
+             * So, it is needed to align the structure to execute this method.
+             */
             if ($transLanguage) {
                 if (is_string($idx)) {
                     self::$currentStructure['mainKeyValue'] = $idx;
@@ -891,6 +994,18 @@ final class BaseDataStructureTest extends TestCase
                 self::$duplicatesControl['countries']['languagesDynBuilt'] = [];
             }
 
+            /**
+             * In the case of `scripts`, the `ranges` must be checked for hexadecimal continuity.
+             * Therefore, there are some variables that must be reset for each record.
+             * The anchor for the check is anyway the duplicate control
+             */
+            if ($dataSetName == 'scripts') {
+                self::$duplicatesControl['scripts']['rangesDynBuilt'] = [
+                    'checkOrder' => [],
+                    'countPoints' => 0
+                ];
+            }
+
             $processed = [];
             $queue = array_keys(self::$geocodeDataStructure[$dataSetName]['properties']);
 
@@ -909,11 +1024,12 @@ final class BaseDataStructureTest extends TestCase
                 $functions = self::$geocodeDataStructure[$dataSetName]['properties'][$property];
                 $propertyToCheck = self::$currentStructure['propertyName'] = $property;
                 $itemPartWhereToCheck = $item;
+                $parentProperty = null;
                 if (preg_match('/\./', $property)) {
                     $propArr = explode('.', $property);
                     $propertyToCheck = array_pop($propArr);
-                    $refProperty = join('.', $propArr);
-                    $itemPartWhereToCheck = (array) $this->arrayGetDot($item, $refProperty);
+                    $parentProperty = join('.', $propArr);
+                    $itemPartWhereToCheck = (array) $this->arrayGetDot($item, $parentProperty);
                 }
 
                 if ($transLanguage) {
@@ -1083,23 +1199,51 @@ final class BaseDataStructureTest extends TestCase
                     }
 
                     /** Check the minimum and maximum in case of integer */
-                    if (array_key_exists('min', $functions) && $functions['min'] && is_integer($itemPropertyValue)) {
-                        $this->assertGreaterThanOrEqual(
-                            $functions['min'],
-                            $itemPropertyValue,
-                            $this->getErrorMessage(
-                                'The property ' . $name . ' must be greater or equal to `' . $functions['min'] . '`'
-                            )
-                        );
+                    if (is_integer($itemPropertyValue)) {
+                        if (array_key_exists('min', $functions) && $functions['min']) {
+                            $this->assertGreaterThanOrEqual(
+                                $functions['min'],
+                                $itemPropertyValue,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' must be greater or equal to `' . $functions['min'] . '`'
+                                )
+                            );
+                        }
+                        if (array_key_exists('max', $functions) && $functions['max']) {
+                            $this->assertLessThanOrEqual(
+                                $functions['max'],
+                                $itemPropertyValue,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' cannot be greater than `' . $functions['max'] . '`'
+                                )
+                            );
+                        }
                     }
-                    if (array_key_exists('max', $functions) && $functions['max'] && is_integer($itemPropertyValue)) {
-                        $this->assertLessThanOrEqual(
-                            $functions['max'],
-                            $itemPropertyValue,
-                            $this->getErrorMessage(
-                                'The property ' . $name . ' cannot be greater than `' . $functions['max'] . '`'
-                            )
-                        );
+
+
+                    /** Check the minimum and maximum allowed elements in case of array */
+                    if (is_array($itemPropertyValue) and !empty($itemPropertyValue)) {
+                        $arraySize = count($itemPropertyValue);
+                        if (array_key_exists('minCount', $functions) && $functions['minCount']) {
+                            $this->assertGreaterThanOrEqual(
+                                $functions['minCount'],
+                                $arraySize,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' must have a number of elements greater or equal to `'
+                                    . $functions['minCount'] . '`. Resulting: ' . $arraySize
+                                )
+                            );
+                        }
+                        if (array_key_exists('maxCount', $functions) && $functions['maxCount']) {
+                            $this->assertLessThanOrEqual(
+                                $functions['maxCount'],
+                                $arraySize,
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' cannot have a number of elements greater than `'
+                                    . $functions['maxCount'] . '`. Resulting: ' . $arraySize
+                                )
+                            );
+                        }
                     }
 
                     /** Check the duplicates */
@@ -1333,15 +1477,15 @@ final class BaseDataStructureTest extends TestCase
                         array_key_exists('checkTimeZone', $functions) &&
                         !empty($functions['checkTimeZone'])
                     ) {
-                        $this->assertContains(
-                            $itemPropertyValue,
-                            DateTimeZone::listIdentifiers(DateTimeZone::ALL),
-                            $this->getErrorMessage(
-                                'The property ' . $name . ' `'
-                                . (is_string($itemPropertyValue) ? $itemPropertyValue : '')
-                                . '` is not a valid time zone.'
-                            )
-                        );
+                        if (!in_array($itemPropertyValue, DateTimeZone::listIdentifiers(DateTimeZone::ALL), true)) {
+                            $this->addWarning(
+                                $this->getErrorMessage(
+                                    'The property ' . $name . ' `'
+                                    . (is_string($itemPropertyValue) ? $itemPropertyValue : '')
+                                    . '` is not a valid time zone. (TimeZone Version: ' . self::$timeZoneVersion .')'
+                                )
+                            );
+                        }
                     }
 
                     /** Check for a valid BCP 47 locale */
@@ -1374,7 +1518,100 @@ final class BaseDataStructureTest extends TestCase
                         );
                     }
 
-                    /** [TODO] */
+                    /** Check the Hexadecimal Continuity */
+                    if (
+                        array_key_exists('checkHexadecimalContinuity', $functions) &&
+                        $functions['checkHexadecimalContinuity'] &&
+                        is_string($itemPropertyValue) &&
+                        !empty($itemPropertyValue)
+                    ) {
+                        $intEntry = (int) hexdec($itemPropertyValue);
+                        $currentBlock = intval(substr((string) strrchr($parentProperty, '.'), 1));
+                        $pos = strrpos($parentProperty, '.');
+                        $paragonProperty = $pos !== false
+                            ? substr($parentProperty, 0, $pos) . '.'
+                            : $parentProperty;
+                        $previousBlock = null;
+                        $paragonValue = -1;
+                        if ($currentBlock > 0) {
+                            $previousBlock = $currentBlock - 1;
+                        }
+                        if (
+                            !array_key_exists(
+                                $currentBlock,
+                                self::$duplicatesControl['scripts']['rangesDynBuilt']['checkOrder']
+                            )
+                        ) {
+                            self::$duplicatesControl['scripts']['rangesDynBuilt']['checkOrder'][$currentBlock] = [];
+                        }
+                        self::$duplicatesControl['scripts']['rangesDynBuilt']['checkOrder']
+                            [$currentBlock][$propertyToCheck] = $intEntry;
+                        switch ($propertyToCheck) {
+                            case 0:
+                                if ($previousBlock !== null) {
+                                    $xBlock =
+                                        (array_key_exists(
+                                            1,
+                                            self::$duplicatesControl['scripts']['rangesDynBuilt']
+                                                ['checkOrder'][$previousBlock]
+                                        )) ? 1 : 0;
+                                    $paragonValue =
+                                        self::$duplicatesControl['scripts']['rangesDynBuilt']
+                                            ['checkOrder'][$previousBlock][$xBlock];
+                                    $paragonProperty .= $previousBlock . '.' . $xBlock;
+                                }
+                                self::$duplicatesControl['scripts']['rangesDynBuilt']['countPoints']++;
+                                break;
+                            case 1:
+                                $paragonValue =
+                                    self::$duplicatesControl['scripts']['rangesDynBuilt']['checkOrder']
+                                        [$currentBlock][0];
+                                $paragonProperty .= $currentBlock . '.0';
+
+                                self::$duplicatesControl['scripts']['rangesDynBuilt']['countPoints'] +=
+                                    (
+                                        $intEntry -
+                                        $paragonValue
+                                    );
+                                break;
+                            default:
+                                $paragonProperty = '';
+                        }
+                        $this->assertGreaterThan(
+                            $paragonValue,
+                            $intEntry,
+                            $this->getErrorMessage(
+                                'The property ' . $name . ' must be greater than the previous one. '
+                                . 'Paragon property: `'
+                                . $paragonProperty
+                                . '`'
+                            )
+                        );
+                    }
+                }
+            }
+            /** Test to execute after all the properties checks are already passed */
+            if (
+                array_key_exists('afterRecordTest', self::$geocodeDataStructure[$dataSetName]) &&
+                !empty(self::$geocodeDataStructure[$dataSetName]['afterRecordTest'])
+            ) {
+
+                /** Check the integrity for the count of the ranges points (for scripts) */
+                if (
+                    array_key_exists(
+                        'checkIntegrityOfRangesPoints',
+                        self::$geocodeDataStructure[$dataSetName]['afterRecordTest']
+                    ) &&
+                    self::$geocodeDataStructure[$dataSetName]['afterRecordTest']['checkIntegrityOfRangesPoints']
+                ) {
+                    self::$currentStructure['propertyName'] = 'unicode.totalCodePoints';
+                    $this->assertEquals(
+                        self::$duplicatesControl['scripts']['rangesDynBuilt']['countPoints'],
+                        $this->arrayGetDot($item, self::$currentStructure['propertyName']),
+                        $this->getErrorMessage(
+                            'The property value has no integrity with the related ranges points.'
+                        )
+                    );
                 }
             }
             self::$currentStructure['itemPosition']++;
