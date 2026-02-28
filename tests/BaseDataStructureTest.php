@@ -1477,12 +1477,12 @@ final class BaseDataStructureTest extends TestCase
                         array_key_exists('checkTimeZone', $functions) &&
                         !empty($functions['checkTimeZone'])
                     ) {
-                        if (!in_array($itemPropertyValue, DateTimeZone::listIdentifiers(DateTimeZone::ALL), true)) {
+                        if (!in_array($itemPropertyValue, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC), true)) {
                             $this->addWarning(
                                 $this->getErrorMessage(
                                     'The property ' . $name . ' `'
                                     . (is_string($itemPropertyValue) ? $itemPropertyValue : '')
-                                    . '` is not a valid time zone. (TimeZone Version: ' . self::$timeZoneVersion .')'
+                                    . '` is not a valid time zone. (TimeZone Version: ' . self::$timeZoneVersion . ')'
                                 )
                             );
                         }
