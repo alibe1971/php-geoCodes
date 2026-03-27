@@ -71,6 +71,34 @@ class CodesCurrencies extends Enquiries
             'access' => Access::PUBLIC,
             'search' => false,
             'description' => 'The decimals of the currency'
-        ]
+        ],
+        'scope' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The scope of the currency'
+        ],
+        'scope.code' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'isCategory' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The scope code of the currency'
+        ],
+        'scope.description' => [
+            'source' => Source::TRANSLATIONSCATEGORIES,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The scope description of the currency'
+        ],
     ];
 }

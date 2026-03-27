@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Categories\Category;
 
 class GeoSet extends BaseDataObj
 {
@@ -37,6 +38,7 @@ class GeoSet extends BaseDataObj
             'internalCode' => 'string',
             'unM49' => 'string',
             'name' => 'string',
+            'scope' => Category::class,
             'tags' => SerializedArray::class,
             'countryCodes' => SerializedArray::class
         ];

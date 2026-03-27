@@ -11,7 +11,8 @@ class DataSets
      */
     public static array $dataSets = [
         Source::DATA => [],
-        Source::TRANSLATIONS => []
+        Source::TRANSLATIONS => [],
+        Source::TRANSLATIONSCATEGORIES => []
     ];
 
 
@@ -22,13 +23,17 @@ class DataSets
      */
     public static function getData(string $file): array
     {
-        return include(dirname(__DIR__) . '/Data/' . $file . '.php');
+        $file = dirname(__DIR__) . '/Data/' . $file . '.php';
+        if (file_exists($file)) {
+            return include($file);
+        }
+        return [];
     }
 
 
     /**
      * Validate an SVG
-     * @param $svgContent
+     * @param string $svgContent
      * @return bool
      */
     public static function isValidSVG(string $svgContent): bool

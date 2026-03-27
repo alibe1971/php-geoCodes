@@ -37,6 +37,73 @@ final class BaseDataStructureTest extends TestCase
         'jsonItem' => null
     ];
 
+    /**
+     * @var array<string, array<string, array<string>>>
+     */
+    private const CATEGORIES = [
+        'countries' => [],
+        'geoSets' => [
+            'scope' => [ 'ORGS', 'GEOG', 'CONV' ]
+        ],
+        'currencies' => [
+            'scope' => [ 'M', 'F', 'P', 'S' ]
+        ],
+        'languages' => [
+            'scope' => [ 'I', 'M', 'S' ],
+            'type' => [ 'A', 'C', 'E', 'H', 'L', 'S' ],
+        ],
+        'scripts' => [
+            'writingDirection' => [ 'nla', 'rtl', 'ltr' ]
+        ],
+    ];
+
+    /**
+     * @phpstan-type KeysCheck array{
+     *     type: 'string',
+     *     validateBCP47?: bool
+     * }
+     *
+     * @phpstan-type DynamicString array{
+     *     type: 'string',
+     *     regex?: string,
+     *     checkDuplicate?: string,
+     *     checkExistInDataSet?: string,
+     *     keysChecks?: KeysCheck
+     * }
+     *
+     * @phpstan-type FixedKeys array<string, array{
+     *     type: 'array',
+     *     isDynamic: array{
+     *         typeOfArray: 'associative'|'list',
+     *         dynamicBuild: DynamicString
+     *     }
+     * }>
+     *
+     * @phpstan-type DynamicArray array{
+     *     type: 'array',
+     *     canBeEmpty?: bool,
+     *     isDynamic: array{
+     *         typeOfArray: 'associative'|'list',
+     *         dynamicBuild: array{
+     *             type: 'array',
+     *             canBeEmpty?: bool,
+     *             isDynamic: array{
+     *                 typeOfArray: 'associative'|'list',
+     *                 dynamicBuild: array{
+     *                     fixedKeys: FixedKeys
+     *                 }
+     *             }
+     *         }|DynamicString
+     *     }
+     * }
+     *
+     * @phpstan-type RecurringStructure array{
+     *     countries: array{
+     *         mottos: DynamicArray,
+     *         languages: DynamicArray
+     *     }
+     * }
+     */
     private const RECURRING_STRUCTURE = [
         'countries' => [
             'mottos' => [
@@ -395,6 +462,16 @@ final class BaseDataStructureTest extends TestCase
                     'type' => 'integer',
                     'nullable' => true
                 ],
+                'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'scope.code' => [
+                    'type' => 'string',
+                    'canBeEmpty' => false,
+                    'regex' => '/^[A-Z]{1}$/',
+                    'checkCategory' => self::CATEGORIES['currencies']['scope']
+                ],
             ]
         ],
         'geoSets' => [
@@ -447,6 +524,16 @@ final class BaseDataStructureTest extends TestCase
                         'key' => 'internalCode',
                         'regex' => '/^GEOG-AQ$/',
                     ],
+                ],
+                'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'scope.code' => [
+                    'type' => 'string',
+                    'canBeEmpty' => false,
+                    'regex' => '/^[A-Z]{4}$/',
+                    'checkCategory' => self::CATEGORIES['geoSets']['scope']
                 ],
                 'tags' => [
                     'type' => 'array',
@@ -516,12 +603,24 @@ final class BaseDataStructureTest extends TestCase
                     'checkDuplicate' => null
                 ],
                 'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'scope.code' => [
                     'type' => 'string',
-                    'checkCategory' => [ 'I', 'M', 'S' ]
+                    'canBeEmpty' => false,
+                    'regex' => '/^[A-Z]{1}$/',
+                    'checkCategory' => self::CATEGORIES['languages']['scope']
                 ],
                 'type' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'type.code' => [
                     'type' => 'string',
-                    'checkCategory' => [ 'A', 'C', 'E', 'H', 'L', 'S' ]
+                    'canBeEmpty' => false,
+                    'regex' => '/^[A-Z]{1}$/',
+                    'checkCategory' => self::CATEGORIES['languages']['type']
                 ],
                 'macroLanguageRef' => [
                     'type' => 'string',
@@ -567,10 +666,14 @@ final class BaseDataStructureTest extends TestCase
                     'checkDuplicate' => 'scripts.numeric'
                 ],
                 'writingDirection' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                ],
+                'writingDirection.code' => [
                     'type' => 'string',
-                    'nullable' => true,
+                    'canBeEmpty' => false,
                     'regex' => '/^[a-z]{3}$/',
-                    'checkCategory' => [ 'rtl', 'ltr' ]
+                    'checkCategory' => self::CATEGORIES['scripts']['writingDirection']
                 ],
                 'unicode' => [],
                 'unicode.version' => [
@@ -728,6 +831,169 @@ final class BaseDataStructureTest extends TestCase
                     'type' => 'string',
                     'defaultNotNullable' => true,
                     'checkDuplicate' => null
+                ]
+            ]
+        ]
+    ];
+
+    /**
+     * @var array<string, mixed>
+     */
+    private static array $geocodeTranslationsCategoriesProperties = [
+        'countries' => [],
+        'geoSets' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ],
+                'scope' => [
+                    'key' => 'scope',
+                    'useKeys' => true,
+                    'values' => []
+                ]
+            ],
+            "properties" => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'checkDuplicate' => null
+                ],
+                'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'defaultNotNullable' => true,
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'checkCategory' => self::CATEGORIES['geoSets']['scope']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        'currencies' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ],
+                'scope' => [
+                    'key' => 'scope',
+                    'useKeys' => true,
+                    'values' => []
+                ]
+            ],
+            "properties" => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'checkDuplicate' => null
+                ],
+                'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'defaultNotNullable' => true,
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'checkCategory' => self::CATEGORIES['currencies']['scope']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        'languages' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ],
+                'scope' => [
+                    'key' => 'scope',
+                    'useKeys' => true,
+                    'values' => []
+                ],
+                'type' => [
+                    'key' => 'type',
+                    'useKeys' => true,
+                    'values' => []
+                ]
+            ],
+            "properties" => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'checkDuplicate' => null
+                ],
+                'scope' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'defaultNotNullable' => true,
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'checkCategory' => self::CATEGORIES['languages']['scope']
+                            ]
+                        ]
+                    ]
+                ],
+                'type' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'defaultNotNullable' => true,
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'checkCategory' => self::CATEGORIES['languages']['type']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        'scripts' => [
+            'indexes' => [
+                'main' => [
+                    'key' => 'translationIndex',
+                    'values' => []
+                ],
+                'writingDirection' => [
+                    'key' => 'writingDirection',
+                    'useKeys' => true,
+                    'values' => []
+                ]
+            ],
+            "properties" => [
+                'translationIndex' => [
+                    'type' => 'string',
+                    'checkDuplicate' => null
+                ],
+                'writingDirection' => [
+                    'type' => 'array',
+                    'canBeEmpty' => false,
+                    'isDynamic' => [
+                        'typeOfArray' => 'associative', // or `list`
+                        'dynamicBuild' => [
+                            'type' => 'string',
+                            'defaultNotNullable' => true,
+                            'keysChecks' => [
+                                'type' => 'string',
+                                'checkCategory' => self::CATEGORIES['scripts']['writingDirection']
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ]
@@ -915,6 +1181,37 @@ final class BaseDataStructureTest extends TestCase
                 self::$geocodeDataStructure[$dataSetName] = self::$geocodeTranslationsProperties[$translationsSet];
                 $this->parseDataSet($dataSetName, $dataSetPath, self::$geocodeDataStructure[$dataSetName]);
 
+                /** Categories */
+                if (!empty(self::$geocodeTranslationsCategoriesProperties[$translationsSet])) {
+                    $dataSetCatName = 'translationsCategory.' . $language . '.' . $translationsSet;
+                    $dataSetPath = self::$dataDir . '/Translations/' . $language . '/Categories/'
+                        . $translationsSet . '.php';
+                    self::$geocodeDataStructure[$dataSetCatName] =
+                        self::$geocodeTranslationsCategoriesProperties[$translationsSet];
+                    $this->parseDataSet($dataSetCatName, $dataSetPath, self::$geocodeDataStructure[$dataSetCatName]);
+
+                    /** Additional check for matches between the categories and the related translation datasets */
+                    if ($language == self::$defaultLanguage) {
+                        foreach (self::$geocodeDataStructure[$dataSetCatName]['indexes'] as $index) {
+                            if (isset(self::CATEGORIES[$translationsSet][$index['key']])) {
+                                $diff = array_diff(
+                                    self::CATEGORIES[$translationsSet][$index['key']],
+                                    $index['values'],
+                                );
+                                $this->assertEmpty(
+                                    $diff,
+                                    'Translation Categories dataset: `' . $translationsSet . '`' . "\n"
+                                    . 'Language: `' . $language . '`' . "\n"
+                                    . 'The following key codes in the `' . $translationsSet . '`, '
+                                    . 'Category `' . $index['key'] . '` dataset '
+                                    . 'have no correspondence in the related translation data: ' . "\n"
+                                    . '[' . implode(', ', $diff) . ']'
+                                );
+                            }
+                        }
+                    }
+                }
+
                 /** Additional check for matches between the main and the related translation datasets */
                 if ($language == self::$defaultLanguage) {
                     $diff = array_diff(
@@ -945,6 +1242,17 @@ final class BaseDataStructureTest extends TestCase
             foreach (array_keys(self::$geocodeTranslationsProperties) as $translationsSet) {
                 $dataSetName = 'translations.' . $language . '.' . $translationsSet;
                 $this->commonDataTests($dataSetName, $language);
+            }
+
+            /** Categories */
+            foreach (array_keys(self::$geocodeTranslationsCategoriesProperties) as $translationsSet) {
+                if (!empty(self::$geocodeTranslationsCategoriesProperties[$translationsSet])) {
+                    $dataSetName = 'translationsCategory.' . $language . '.' . $translationsSet;
+                    self::$geocodeDataSet[$dataSetName] = [
+                        $translationsSet => self::$geocodeDataSet[$dataSetName],
+                    ];
+                    $this->commonDataTests($dataSetName, $language);
+                }
             }
         }
     }
@@ -1477,7 +1785,13 @@ final class BaseDataStructureTest extends TestCase
                         array_key_exists('checkTimeZone', $functions) &&
                         !empty($functions['checkTimeZone'])
                     ) {
-                        if (!in_array($itemPropertyValue, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC), true)) {
+                        if (
+                            !in_array(
+                                $itemPropertyValue,
+                                DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC),
+                                true
+                            )
+                        ) {
                             $this->addWarning(
                                 $this->getErrorMessage(
                                     'The property ' . $name . ' `'
@@ -1636,14 +1950,17 @@ final class BaseDataStructureTest extends TestCase
                 empty($indexParam['doNotSetOnInit'])
             ) {
                 self::$geocodeDataStructure[$dataSetName]['indexes'][$indexName]['values'] =
-                    ($indexParam['key'] == 'translationIndex') ?
-                        array_keys($dataSet) :
-                        array_values(
+                    $indexParam['key'] === 'translationIndex'
+                        ? array_keys($dataSet)
+                        : (!empty($indexParam['useKeys'])
+                        ? array_keys($dataSet[$indexParam['key']] ?? [])
+                        : array_values(
                             array_filter(
                                 array_column($dataSet, $indexParam['key']),
                                 static fn ($v) => $v !== null
                             )
-                        );
+                        )
+                    );
             }
         }
         self::$geocodeDataSet[$dataSetName] = $dataSet;

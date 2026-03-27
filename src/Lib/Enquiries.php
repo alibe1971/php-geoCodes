@@ -144,6 +144,11 @@ class Enquiries
                 $dir = 'Translations/' . $lang . '/' . $this->dataSetName;
                 DataSets::$dataSets[Source::TRANSLATIONS][$lang][$this->dataSetName] = DataSets::getData($dir);
             }
+            if (empty(DataSets::$dataSets[Source::TRANSLATIONSCATEGORIES][$lang][$this->dataSetName])) {
+                $dir = 'Translations/' . $lang . '/Categories/' . $this->dataSetName;
+                DataSets::$dataSets[Source::TRANSLATIONSCATEGORIES][$lang][$this->dataSetName] =
+                    DataSets::getData($dir);
+            }
         }
     }
 
@@ -164,19 +169,28 @@ class Enquiries
         $transDefaultLanguage = DataSets::$dataSets[Source::TRANSLATIONS][$this->InstanceLanguage->default]
             [$this->dataSetName];
         $transSuperDefaultLanguage = DataSets::$dataSets[Source::TRANSLATIONS][$this->InstanceLanguage->superDefault]
-        [$this->dataSetName];
+            [$this->dataSetName];
+
+        /** get the databases for the translations categories */
+        $transCurrentCategoriesLanguage = DataSets::$dataSets[Source::TRANSLATIONSCATEGORIES]
+            [$this->InstanceLanguage->current][$this->dataSetName];
+        $transDefaultCategoriesLanguage = DataSets::$dataSets[Source::TRANSLATIONSCATEGORIES]
+            [$this->InstanceLanguage->default][$this->dataSetName];
+        $transSuperDefaultCategoriesLanguage = DataSets::$dataSets[Source::TRANSLATIONSCATEGORIES]
+            [$this->InstanceLanguage->superDefault][$this->dataSetName];
 
         /** parse the data*/
         $k = 0;
         foreach (DataSets::$dataSets[Source::DATA][$this->dataSetName] as $data) {
             $object = [];
+            $categorySource = $value = null;
             foreach ($this->dataSetsStructure as $prop => $structure) {
                 /** get the value from the source */
                 if ($structure['source'] === Source::DATA) {
                     $parts = explode('.', $prop);
                     if (count($parts) === 1) {
                         if (array_key_exists($parts[0], $data)) {
-                            $object[$parts[0]] = $data[$parts[0]];
+                            $object[$parts[0]] = $value = $data[$parts[0]];
                         }
                     } else {
                         $found = false;
@@ -184,6 +198,9 @@ class Enquiries
                         if ($found) {
                             $this->arraySetPath($object, $parts, $value);
                         }
+                    }
+                    if (!empty($structure['isCategory'])) {
+                        $categorySource = $value;
                     }
                 }
                 if ($structure['source'] === Source::TRANSLATIONS) {
@@ -194,8 +211,18 @@ class Enquiries
                             $transSuperDefaultLanguage[$data[$this->dataSetPrimaryKey]][$prop]
                         );
                 }
+                if ($structure['source'] === Source::TRANSLATIONSCATEGORIES) {
+                    $parts = explode('.', $prop);
+                    $parent = $parts[0];
+                    $value = !empty($transCurrentCategoriesLanguage[$parent][$categorySource]) ?
+                        $transCurrentCategoriesLanguage[$parent][$categorySource] :
+                        (!empty($transDefaultCategoriesLanguage[$parent][$categorySource]) ?
+                            $transDefaultCategoriesLanguage[$parent][$categorySource] :
+                            $transSuperDefaultCategoriesLanguage[$parent][$categorySource]
+                        );
+                    $this->arraySetPath($object, $parts, $value);
+                }
             }
-
             $this->dataSets[$this->dataSetName][$object[$this->dataSetPrimaryKey]] = $object;
             $k++;
         }

@@ -6,4 +6,5 @@ class Source
 {
     public const DATA = 'Data';
     public const TRANSLATIONS = 'Translations';
+    public const TRANSLATIONSCATEGORIES = 'TranslationsCategories';
 }

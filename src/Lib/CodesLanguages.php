@@ -83,22 +83,59 @@ class CodesLanguages extends Enquiries
         ],
         'scope' => [
             'source' => Source::DATA,
-            'type' => Type::STRING,
+            'type' => Type::OBJECT,
             'nullable' => false,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
-            'search' => true,
-            'description' => 'The scope of the language: I(ndividual), M(acrolanguage), S(pecial) '
+            'search' => false,
+            'description' => 'The scope of the language'
         ],
-        'type' => [
+        'scope.code' => [
             'source' => Source::DATA,
             'type' => Type::STRING,
             'nullable' => false,
+            'isCategory' => true,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
-            'search' => true,
-            'description' =>
-                'The type of the language: A(ncient), C(onstructed), E(xtinct), H(istorical), L(iving), S(pecial)'
+            'search' => false,
+            'description' => 'The scope code of the language'
+        ],
+        'scope.description' => [
+            'source' => Source::TRANSLATIONSCATEGORIES,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The scope description of the language'
+        ],
+        'type' => [
+            'source' => Source::DATA,
+            'type' => Type::OBJECT,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The type of the language'
+        ],
+        'type.code' => [
+            'source' => Source::DATA,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'isCategory' => true,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The type code of the language'
+        ],
+        'type.description' => [
+            'source' => Source::TRANSLATIONSCATEGORIES,
+            'type' => Type::STRING,
+            'nullable' => false,
+            'index' => Index::NOTINDEXABLE,
+            'access' => Access::PUBLIC,
+            'search' => false,
+            'description' => 'The type description of the language'
         ],
         'macroLanguageRef' => [
             'source' => Source::DATA,

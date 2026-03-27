@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Categories\Category;
 use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class Language extends BaseDataObj
@@ -38,8 +39,8 @@ class Language extends BaseDataObj
             'part2t' => Type::STRING,
             'part1' => Type::STRING,
             'glottoCode' => Type::STRING,
-            'scope' => Type::STRING,
-            'type' => Type::STRING,
+            'scope' => Category::class,
+            'type' => Category::class,
             'macroLanguageRef' => Type::STRING,
             'scripts' => SerializedArray::class
         ];

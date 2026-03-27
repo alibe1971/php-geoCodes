@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\DataObj\Elements\Categories\Category;
 use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class Currency extends BaseDataObj
@@ -32,7 +33,8 @@ class Currency extends BaseDataObj
             'isoNumber' => Type::STRING,
             'name' => Type::STRING,
             'symbol' => Type::STRING,
-            'decimal' => Type::INTEGER
+            'decimal' => Type::INTEGER,
+            'scope' => Category::class
         ];
     }
 }
