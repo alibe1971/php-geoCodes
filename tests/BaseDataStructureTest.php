@@ -2056,12 +2056,15 @@ final class BaseDataStructureTest extends TestCase
         if (!in_array($language, (array) $this->arrayGetDot(self::$geocodeDataStructure, $path))) {
             return false;
         }
-
-        // --- SCRIPT ([TODO]) ---
         if ($script !== null) {
-//            if (!in_array($script, $this->arrayGetDot(self::$geocodeDataStructure, 'scripts.main.values'))) {
-//                return false;
-//            }
+            if (
+                !in_array(
+                    $script,
+                    (array) $this->arrayGetDot(self::$geocodeDataStructure, 'scripts.indexes.main.values')
+                )
+            ) {
+                return false;
+            }
         }
 
         // --- REGION ---
