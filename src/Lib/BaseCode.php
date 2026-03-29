@@ -169,4 +169,13 @@ class BaseCode
     {
         return new CodesLanguages($this->getInstanceLanguage(), $this->getCurrentLocale());
     }
+
+    /**
+     * @return CodesScripts
+     * @throws QueryException
+     */
+    public function scripts(): CodesScripts
+    {
+        return new CodesScripts($this->getInstanceLanguage(), $this->getCurrentLocale());
+    }
 }
