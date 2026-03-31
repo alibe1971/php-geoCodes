@@ -704,6 +704,13 @@ class Enquiries
                     ];
                     $item = strtolower($item);
                     break;
+                case 'scripts':
+                    $prop = $prop == 'numeric' ? 'numeric' : 'code';
+                    $Enquiry = [
+                        'scripts' => $prop
+                    ];
+                    $item = ucfirst(strtolower($item));
+                    break;
                 default:
                     break;
             }
