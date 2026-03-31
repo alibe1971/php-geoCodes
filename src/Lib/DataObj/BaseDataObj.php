@@ -2,6 +2,7 @@
 
 namespace Alibe\GeoCodes\Lib\DataObj;
 
+use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 use Alibe\GeoCodes\Lib\Enums\Exceptions\GeneralCodes;
 use Alibe\GeoCodes\Lib\Exceptions\GeneralException;
 use DOMDocument;
@@ -164,7 +165,29 @@ class BaseDataObj extends StdClass implements IteratorAggregate
                 return $this;
             }
 
+            /** Case of array of arrays */
             if (array_key_exists($parserKey, $data)) {
+                if (
+                    is_array($parserValue) &&
+                    isset($parserValue[0]) &&
+                    is_array($parserValue[0]) &&
+                    isset($parserValue[0][0]) &&
+                    $parserValue[0][0] === Type::STRING
+                ) {
+                    $result = [];
+                    if (is_array($data[$parserKey])) {
+                        foreach ($data[$parserKey] as $subArray) {
+                            if (is_array($subArray)) {
+                                $result[] = array_values($subArray);
+                            } else {
+                                $result[] = [];
+                            }
+                        }
+                    }
+                    $this->{$parserKey} = $result;
+                    continue;
+                }
+
                 $valueType = gettype($parserValue);
 
                 switch ($valueType) {
@@ -260,7 +283,12 @@ class BaseDataObj extends StdClass implements IteratorAggregate
         }
 
         foreach ($data as $key => $value) {
-            $rawKey = (string)($tagKey ?? $key);
+            if (is_numeric($key)) {
+                $rawKey = (string)($tagKey ?? $rootElement);
+            } else {
+                $rawKey = (string)($tagKey ?? $key);
+            }
+
             $transformedKey = preg_replace('/[^a-zA-Z0-9_]/', '_', $rawKey) ?? $rawKey;
 
             if (!is_string($transformedKey) || $transformedKey === '') {
@@ -280,6 +308,11 @@ class BaseDataObj extends StdClass implements IteratorAggregate
                 $newMap = isset($map['@children'][$key])
                     ? $map['@children']
                     : ($map[$rootElement] ?? []);
+
+                if (isset($newMap['@childrenList'])) {
+                    $newMap = $newMap['@childrenList'];
+                    $newRootElement = $newMap['@tag'];
+                }
 
                 $this->arrayToXml($value, $subElement, $dom, $newRootElement, $newMap);
                 continue;
@@ -358,7 +391,7 @@ class BaseDataObj extends StdClass implements IteratorAggregate
     }
 
     /**
-     * @return array<string, array<string, array<string, array<string, string>|string>>>
+     * @return array<string, mixed>
      */
     protected function getXmlMap(): array
     {

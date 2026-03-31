@@ -2,7 +2,6 @@
 
 namespace Alibe\GeoCodes\Lib\DataObj;
 
-use Alibe\GeoCodes\Lib\DataObj\Elements\GeoSet;
 use Alibe\GeoCodes\Lib\DataObj\Elements\Script;
 
 class Scripts extends BaseDataObj implements \JsonSerializable
@@ -13,7 +12,8 @@ class Scripts extends BaseDataObj implements \JsonSerializable
     protected string $xmlRootElement = "scripts";
 
     /**
-     * @return  array<string, array<string, array<string, array<string, array<string, string>|string>>|string>>
+     * @return  array<string, array<string, array<string, array<string, array<string,
+     *  array<string, string>|string>>>|string>>
      */
     protected function getXmlMap(): array
     {
@@ -23,7 +23,7 @@ class Scripts extends BaseDataObj implements \JsonSerializable
                     "@tag" => "script",
                     "@attribute" => "index"
                 ],
-                (new GeoSet())->getXmlMap()
+                (new Script())->getXmlMap()
             )
         ];
     }

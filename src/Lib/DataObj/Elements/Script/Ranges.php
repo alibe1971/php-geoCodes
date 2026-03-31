@@ -3,15 +3,14 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Script;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
-use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
-class Range extends BaseDataObj
+class Ranges extends BaseDataObj
 {
     /**
-     * @return array<mixed>
+     * @return array<int, string>
      */
     protected function getObjectStructureParser(): array
     {
-        return [Type::STRING];
+        return [Range::class];
     }
 }

@@ -42,7 +42,7 @@ class CodesScripts extends Enquiries
             'source' => Source::DATA,
             'type' => Type::STRING,
             'nullable' => false,
-            'index' => Index::NOTINDEXABLE,
+            'index' => Index::INDEXABLE,
             'access' => Access::PUBLIC,
             'search' => true,
             'description' => 'The numeric iso code of the script set'
@@ -96,7 +96,7 @@ class CodesScripts extends Enquiries
         'unicode.version' => [
             'source' => Source::DATA,
             'type' => Type::STRING,
-            'nullable' => false,
+            'nullable' => true,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
             'search' => true,

@@ -14,23 +14,24 @@ class Script extends BaseDataObj
      */
     protected string $xmlRootElement = "script";
 
-//    /**
-//     * @return array<string, array<string, array<string, array<string, string>|string>>>
-//     */
-//    protected function getXmlMap(): array
-//    {
-//        return [];
-//        return [
-//            'script' => [
-//                "writingDirection" => [
-//                    "@writingDirection" => "writingDirection"
-//                ],
-//                "unicode" => [
-//                    "@unicode" => "unicode"
-//                ],
-//            ]
-//        ];
-//    }
+    /**
+     * @return array<string, array<string, array<string, array<string, array<string, string>|string>>>>
+     */
+    protected function getXmlMap(): array
+    {
+        return [
+            'script' => [
+                "unicode" => [
+                    "ranges" => [
+                        '@tag' => 'range',
+                        '@childrenList' => [
+                            "@tag" => "edge"
+                        ]
+                    ]
+                ],
+            ]
+        ];
+    }
 
     /**
      * @return array<string, mixed>
