@@ -761,16 +761,18 @@ final class IsoGeoSetsTest extends TestCase
                 } else {
                     $this->fail('Description for key `' . $key . '` must contain a [type]');
                 }
+
+                $getType = gettype($object->{$prop});
                 if (strpos($type, '?') === 0) {
                     $type = substr($type, 1);
-                    $assert = gettype($object->{$prop}) === $type || gettype($object->{$prop}) === 'NULL';
+                    $assert = $getType === $type || $getType === 'NULL';
                 } else {
-                    $assert = gettype($object->{$prop}) === $type;
+                    $assert = $getType === $type;
                 }
                 $this->assertTrue(
                     $assert,
-                    'Key type `' . $key . '` for the geoset `' . $geoSet->name .
-                        '`does not match with the declared type'
+                    'Key type `' . $key . '` for the geoSet `' . $geoSet->name .
+                    '` (`' . $getType . '`) does not match with the declared type (`' . $type . '`)'
                 );
             }
         }
