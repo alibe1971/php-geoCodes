@@ -955,6 +955,7 @@ class Enquiries
      * @param array<string> $set
      * @param string $method
      * @return array<string>
+     * @throws QueryException
      */
     private function applyConditionsToSet(array $set, string $method): array
     {
@@ -966,7 +967,7 @@ class Enquiries
             }
             foreach ($this->query['conditionsSet'][$method] as $condition) {
                 list($prop, $op, $term) = $condition;
-                // Search the property alibe
+                // Search the property
                 if (preg_match('/\./', $prop)) {
                     $object = $this->dataSets[$this->dataSetName][$setItem];
                     $propPath = explode('.', $prop);
