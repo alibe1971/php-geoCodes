@@ -38,7 +38,7 @@ class CodesCurrencies extends Enquiries
         ],
         'isoNumber' => [
             'source' => Source::DATA,
-            'type' => Type::STRING,
+            'type' => Type::ISONUMERIC,
             'nullable' => false,
             'index' => Index::INDEXABLE,
             'access' => Access::PUBLIC,

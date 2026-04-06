@@ -50,12 +50,12 @@ class CodesCountries extends Enquiries
         ],
         'unM49' => [
             'source' => Source::DATA,
-            'type' => Type::STRING,
+            'type' => Type::ISONUMERIC,
             'nullable' => false,
             'index' => Index::INDEXABLE,
             'access' => Access::PUBLIC,
             'search' => true,
-            'description' => 'The United Nations Statistics Division M49 code (numeric)'
+            'description' => 'The United Nations Statistics Division M49 code (numeric string)'
         ],
         'name' => [
             'source' => Source::TRANSLATIONS,

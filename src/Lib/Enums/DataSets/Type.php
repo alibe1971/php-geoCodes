@@ -8,4 +8,5 @@ class Type
     public const OBJECT = 'object';
     public const ARRAY = 'array';
     public const INTEGER = 'integer';
+    public const ISONUMERIC = 'string'; // Iso Numeric String
 }

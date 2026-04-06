@@ -986,7 +986,7 @@ class Enquiries
                 }
 
                 /** This is an exception for dealing with numeric terms */
-                if (is_numeric($term) && in_array($prop, ['unM49', 'isoNumber', 'numeric'])) {
+                if (is_numeric($term) && $this->dataSetsStructure[$prop]['type'] === Type::ISONUMERIC) {
                     $term = str_pad((string) $term, 3, '0', STR_PAD_LEFT);
                 }
                 // Check if the condition is met
