@@ -1262,7 +1262,7 @@ final class BaseDataStructureTest extends TestCase
      * @param string|null $transLanguage
      * @return void
      */
-    private function commonDataTests(string $dataSetName, string $transLanguage = null): void
+    private function commonDataTests(string $dataSetName, ?string $transLanguage = null): void
     {
         $mainKey = self::$currentStructure['mainKey'] =
             self::$geocodeDataStructure[$dataSetName]['indexes']['main']['key'];

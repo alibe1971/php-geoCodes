@@ -13,7 +13,7 @@ class BaseException extends Exception
      * @param array<int, string|false> $mexParams
      * @param \Throwable|null $previous
      */
-    public function __construct(int $code, array $mexParams = [], \Throwable $previous = null)
+    public function __construct(int $code, array $mexParams = [], ?\Throwable $previous = null)
     {
         $message = ExceptionsMessagesMap::class . '::ERROR_' . $code;
         if (!defined($message)) {

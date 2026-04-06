@@ -542,7 +542,7 @@ class Enquiries
      * @param bool|null $found
      * @return array<array<string>|bool|float|int|string|null>|bool|float|int|string|null
      */
-    private function arrayGetPath(array $array, array $path, bool &$found = null)
+    private function arrayGetPath(array $array, array $path, ?bool &$found = null)
     {
         $found = true;
         $cur = $array;
