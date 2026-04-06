@@ -1401,23 +1401,23 @@ final class IsoScriptsTest extends TestCase
                 'where',
                 ['Hans' => [ 'code' => 'Hans' ]]
             ],
-//            [
-//                "[['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'rtl']]",
-//                [[['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'rtl']]],
-//                'where',
-//                ['Hans' => [ 'code' => 'Hans' ]]
-//            ],
-//            [
-//                "[['code', '=', 'Hans'],['numeric', '=', '501'],['writingDirection.code', 'rtl'],
-//['unicode.version', '1.1']]",
-//                [
-//                    [
-//                        ['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'rtl'],
-//                        ['unicode.version', '1.1']
-//                    ]   ],
-//                'where',
-//                ['Hans' => [ 'code' => 'Hans' ]]
-//            ],
+            [
+                "[['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'ltr']]",
+                [[['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'ltr']]],
+                'where',
+                ['Hans' => [ 'code' => 'Hans' ]]
+            ],
+            [
+                "[['code', '=', 'Hans'],['numeric', '=', '501'],['writingDirection.code', 'ltr'],
+['unicode.version', '1.1']]",
+                [
+                    [
+                        ['code', '=', 'Hans'], ['numeric', '=', '501'], ['writingDirection.code', 'ltr'],
+                        ['unicode.version', '1.1']
+                    ]   ],
+                'where',
+                ['Hans' => [ 'code' => 'Hans' ]]
+            ],
 //            [
 //                "'tags', 'zone'",
 //                ['tags', 'zone'],
