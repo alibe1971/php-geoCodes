@@ -1418,12 +1418,12 @@ final class IsoScriptsTest extends TestCase
                 'where',
                 ['Hans' => [ 'code' => 'Hans' ]]
             ],
-//            [
-//                "'tags', 'zone'",
-//                ['tags', 'zone'],
-//                'where',
-//                ['Arab' => [ 'code' => 'Arab' ]]
-//            ],
+            [
+                "'unicode.ranges', '108F5'",
+                ['unicode.ranges', '108F5'],
+                'where',
+                ['Hatr' => [ 'code' => 'Hatr' ]]
+            ],
             [
                 "'name', 'like', 'Kayah%'",
                 ['name', 'like', 'Kayah%'],
