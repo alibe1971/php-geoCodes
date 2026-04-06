@@ -3,6 +3,7 @@
 namespace Alibe\GeoCodes\Lib\DataObj\Elements\Script;
 
 use Alibe\GeoCodes\Lib\DataObj\BaseDataObj;
+use Alibe\GeoCodes\Lib\DataObj\Elements\SerializedArray;
 use Alibe\GeoCodes\Lib\Enums\DataSets\Type;
 
 class Unicode extends BaseDataObj
@@ -14,7 +15,7 @@ class Unicode extends BaseDataObj
     {
         return [
             'version' => Type::STRING,
-            'ranges' => Ranges::class,
+            'ranges' => SerializedArray::class,
             'totalCodePoints' => Type::INTEGER
         ];
     }
