@@ -1,5 +1,5 @@
 {
-    "name": "alibe/php-geocodes",
+    "name": "alibe/geocodes-php",
     "description": "Script for retrieving and searching information about the ISO-3166 country code",
     "type": "library",
     "keywords": [
