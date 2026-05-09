@@ -391,7 +391,7 @@ final class BaseDataStructureTest extends TestCase
                     'type' => 'array',
                     'canBeEmpty' => false
                 ],
-                'languages.signs.official' => self::RECURRING_STRUCTURE['countries']['languages'],
+                'languages.signs.deJure' => self::RECURRING_STRUCTURE['countries']['languages'],
                 'languages.signs.recognized' => self::RECURRING_STRUCTURE['countries']['languages'],
                 'languages.signs.used' => self::RECURRING_STRUCTURE['countries']['languages'],
                 'languages.dialects' => self::RECURRING_STRUCTURE['countries']['languages'],

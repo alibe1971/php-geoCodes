@@ -372,14 +372,14 @@ class CodesCountries extends Enquiries
             'search' => false,
             'description' => 'The language signs used in the country'
         ],
-        'languages.signs.official' => [
+        'languages.signs.deJure' => [
             'source' => Source::DATA,
             'type' => Type::OBJECT,
             'nullable' => false,
             'index' => Index::NOTINDEXABLE,
             'access' => Access::PUBLIC,
             'search' => false,
-            'description' => 'The language signs with status official used in the country'
+            'description' => 'The language signs with status deJure used in the country'
         ],
         'languages.signs.recognized' => [
             'source' => Source::DATA,

@@ -13,7 +13,7 @@ class LanguagesSigns extends BaseDataObj
     protected function getObjectStructureParser(): array
     {
         return [
-            'official' => SerializedArray::class,
+            'deJure' => SerializedArray::class,
             'recognized' => SerializedArray::class,
             'used' => SerializedArray::class,
         ];

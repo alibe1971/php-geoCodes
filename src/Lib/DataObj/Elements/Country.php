@@ -116,7 +116,7 @@ class Country extends BaseDataObj
                     "localCommunities" => $this->getLanguagesXmlMap(),
                     "extraTerritorialCommunities" => $this->getLanguagesXmlMap(),
                     "signs" => [
-                        "official" => $this->getLanguagesXmlMap(),
+                        "deJure" => $this->getLanguagesXmlMap(),
                         "recognized" => $this->getLanguagesXmlMap(),
                         "used" => $this->getLanguagesXmlMap(),
                     ],

@@ -274,7 +274,7 @@
     </xs:complexType>
     <xs:complexType name="SignLanguages">
         <xs:sequence>
-            <xs:element name="official" type="LanguageList" minOccurs="0"/>
+            <xs:element name="deJure" type="LanguageList" minOccurs="0"/>
             <xs:element name="recognized" type="LanguageList" minOccurs="0"/>
             <xs:element name="used" type="LanguageList" minOccurs="0"/>
         </xs:sequence>

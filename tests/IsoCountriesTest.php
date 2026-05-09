@@ -73,7 +73,7 @@ final class IsoCountriesTest extends TestCase
             'languages.extraTerritorialCommunities',
             'languages.dialects',
             'languages.signs',
-            'languages.signs.official',
+            'languages.signs.deJure',
             'languages.signs.recognized',
             'languages.signs.used',
             'demonyms',
