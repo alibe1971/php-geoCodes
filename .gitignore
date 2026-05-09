@@ -3,4 +3,5 @@ vendor
 .phpunit.result.cache
 composer.lock
 phpunit-as-junit.xml
-.idea
+.DS_Store
+.idea/
