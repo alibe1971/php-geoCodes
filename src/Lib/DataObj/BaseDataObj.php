@@ -89,7 +89,7 @@ class BaseDataObj extends StdClass implements IteratorAggregate
      */
     public function getXsd(): string
     {
-        $xsd = file_get_contents($schemaPath = __DIR__ . '/Xsd/' . $this->xmlRootElement . '.xsd');
+        $xsd = file_get_contents($this->resolveXsdSchemaPath());
         if (!$xsd) {
             throw new GeneralException(GeneralCodes::INVALID_XSD);
         }
@@ -378,8 +378,15 @@ class BaseDataObj extends StdClass implements IteratorAggregate
     {
         $dom = new DOMDocument();
         $dom->loadXML($xmlString);
-        $schemaPath = __DIR__ . '/Xsd/' . $this->xmlRootElement . '.xsd';
-        return $dom->schemaValidate($schemaPath);
+        return $dom->schemaValidate($this->resolveXsdSchemaPath());
+    }
+
+    /**
+     * @return string
+     */
+    private function resolveXsdSchemaPath(): string
+    {
+        return __DIR__ . '/../../Xsd/contracts/' . $this->xmlRootElement . '.xsd';
     }
 
     /**
